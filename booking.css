@@ -174,3 +174,7 @@ html,body{overflow-x:clip}
   .butterfly{width:58px;right:2px;top:70px}
 }
 .q.off .opt[disabled]{text-decoration:none;opacity:1}
+
+/* iOS 会把地址自动识别成链接并加虚线，关掉 */
+a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;font:inherit!important}
+.title h1{overflow-wrap:anywhere}

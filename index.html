@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PiPi 拼豆预约</title>
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no">
 <meta name="description" content="PiPi 拼豆 · Paris 1er · 在线预约 / Réservation en ligne">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
 <link rel="stylesheet" href="booking.css">
@@ -42,7 +43,7 @@
    客人不选座位：系统按人数把座位自动分到店里的桌子上（优先整拨人坐同一张桌） */
 const {CONFIG,TABLES,seatIds,ALL_SEATS,ymd,hm,esc,overlap,api}=PIPI;
 const T={
- zh:{title:'拼豆预约',sub:'Réservation de perles à repasser',
+ zh:{title:'PIPI 拼豆',sub:'Réservation de perles à repasser',
   pickT:'选时间 (｡･ω･｡)ﾉ',pickTi:'Choisir l’horaire',
   s1:'哪天来玩',s2:'几点来',s3:'待多久',s4:'几个人 (๑•̀ㅂ•́)و✧',
   wd:'日一二三四五六',wdp:'周',today:'今天',
@@ -62,7 +63,7 @@ const T={
   eName:'请填名字',ePhone:'请填手机号（至少 6 位数字）',eEmail:'邮箱格式不对',
   eConflict:'刚刚这个时段被别人约满了，请换个时间。',eNet:'没提交成功，请检查网络再试一次。',
   doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'到店说名字就行，等你来拼豆～ 要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次'},
- fr:{title:'Réserver',sub:'Atelier de perles à repasser · PiPi',
+ fr:{title:'PIPIPERLES STUDIO',sub:'Atelier de perles à repasser · PiPi',
   pickT:'Horaire',pickTi:'',
   s1:'Date',s2:'Heure d’arrivée',s3:'Durée',s4:'Combien de personnes ?',
   wd:['dim','lun','mar','mer','jeu','ven','sam'],wdp:'',today:'auj.',
