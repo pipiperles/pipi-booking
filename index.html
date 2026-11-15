@@ -62,7 +62,7 @@ const T={
   submit:'提交预约',submitI:'Valider',sending:'提交中…',
   eName:'请填一个昵称',ePhone:'请填手机号（至少 6 位数字）',eEmail:'邮箱格式不对',
   eConflict:'刚刚这个时段被别人约满了，请换个时间。',eNet:'没提交成功，请检查网络再试一次。',
-  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~'},
+  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~',feed:'喂小猫一条鱼'},
  fr:{title:'PIPIPERLES STUDIO',sub:'Atelier de perles à repasser · PiPi',
   pickT:'Horaire',pickTi:'',
   s1:'Date',s2:'Heure d’arrivée',s3:'Durée',s4:'Combien de personnes ?',
@@ -82,7 +82,7 @@ const T={
   submit:'Réserver',submitI:'',sending:'Envoi…',
   eName:'Indiquez un pseudo',ePhone:'Indiquez un numéro (6 chiffres minimum)',eEmail:'E-mail invalide',
   eConflict:'Ce créneau vient d’être complet, choisissez un autre horaire.',eNet:'Échec de l’envoi. Vérifiez la connexion et réessayez.',
-  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'Pour modifier ou annuler, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation',okT:'Réservé !',meow:'Miaou~'}};
+  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'Pour modifier ou annuler, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation',okT:'Réservé !',meow:'Miaou~',feed:'Donner un poisson au chat'}};
 
 let lang='zh';try{const l=localStorage.getItem('pipi-lang');if(l==='fr'||l==='zh')lang=l;else if(/^fr/i.test(navigator.language))lang='fr'}catch(e){}
 const t=(k,v={})=>String(T[lang][k]).replace(/\{(\w+)\}/g,(_,x)=>v[x]);
@@ -186,11 +186,31 @@ const CAT_BODY=['...OMWWWWWWMO...','..OMDMWWWWMDMO..','..OMMDWWWWDMMO..','..ODMM
 const catRects=(rows,y0)=>rows.map((r,y)=>[...r].map((c,x)=>CAT_PAL[c]?`<rect x="${x}" y="${y+y0}" width="1.02" height="1.02" fill="${CAT_PAL[c]}"/>`:'').join('')).join('');
 const pixelCat=()=>`<svg class="pixcat-svg" viewBox="0 0 16 18" shape-rendering="crispEdges" role="img" aria-label="cat">
   ${catRects(CAT_TOP,0)}${catRects(CAT_BODY,11)}<g class="shut">${catRects(CAT_SHUT,8)}</g><g class="open">${catRects(CAT_OPEN,8)}</g></svg>`;
+/* 点小猫 → 从上面掉下一条像素小鱼 → 猫张嘴吃两口 → 冒一颗像素爱心。可以一直点 */
+const FISH_PAL={O:'#3B2C2A',F:'#5FA8D3',f:'#A9DDF2',K:'#2B211C'};
+const FISH=['..OOOO..OO','.OffFFOOFO','OKfFFFFFO.','.OFFFFOOFO','..OOOO..OO'];
+const FHEART_PAL={O:'#3B2C2A',H:'#E8504A',h:'#FFB36B'};
+const FHEART=['.OO.OO.','OhHOHHO','OHHHHHO','.OHHHO.','..OHO..','...O...'];
+const pix=(rows,pal,cls)=>`<svg class="${cls}" viewBox="0 0 ${rows[0].length} ${rows.length}" shape-rendering="crispEdges" aria-hidden="true">${
+  rows.map((r,y)=>[...r].map((c,x)=>pal[c]?`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[c]}"/>`:'').join('')).join('')}</svg>`;
+function feedCat(cat){
+  const svg=cat.querySelector('.pixcat-svg'),still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  cat.querySelector('.meow-bubble')?.remove();
+  const add=html=>{const d=document.createElement('div');d.innerHTML=html;const n=d.firstElementChild;cat.appendChild(n);return n};
+  const chomp=()=>{const on=[0,250,400],off=[200,350,600];on.forEach(ms=>setTimeout(()=>svg.classList.add('eating'),ms));off.forEach(ms=>setTimeout(()=>svg.classList.remove('eating'),ms))};
+  const heart=()=>{const h=add(pix(FHEART,FHEART_PAL,'pix-heart'));
+    if(!still)h.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-26px)',opacity:1,offset:.7},{transform:'translateY(-32px)',opacity:0}],{duration:900,easing:'steps(6)',fill:'forwards'});
+    setTimeout(()=>h.remove(),900)};
+  if(still){chomp();setTimeout(heart,300);return}
+  const f=add(pix(FISH,FISH_PAL,'pix-fish'));
+  f.animate([{transform:'translateY(-64px) rotate(-12deg)'},{transform:'translateY(-30px) rotate(10deg)',offset:.5},{transform:'translateY(0) rotate(0)'}],{duration:480,easing:'steps(8)',fill:'forwards'});
+  setTimeout(()=>{f.remove();chomp();setTimeout(heart,350)},480);
+}
 function renderDone(){const b=st.done,d=new Date(b.date+'T12:00:00');
   document.getElementById('bar').innerHTML='';
   document.getElementById('main').innerHTML=`<section class="win" style="grid-column:1/-1">${winBar(t('doneT'),'')}<div class="win-body done">
     <img class="logo-big" src="pipi-logo.png" alt="" width="660" height="240">
-    <div class="meow-row"><div class="meow-cat">${pixelCat()}<span class="meow-bubble" aria-hidden="true">${t('meow')}</span></div><h2>${t('okT')}</h2></div>
+    <div class="meow-row"><button type="button" class="meow-cat" aria-label="${t('feed')}" title="${t('feed')}">${pixelCat()}<span class="meow-bubble" aria-hidden="true">${t('meow')}</span></button><h2>${t('okT')}</h2></div>
     <dl><dt>${t('kDate')}</dt><dd>${d.getMonth()+1}/${d.getDate()} ${wdName(d)}</dd><dt>${t('kTime')}</dt><dd>${hm(b.start)}–${hm(b.end)}</dd>
     <dt>${t('kPpl')}</dt><dd>${t('people',{n:b.seats.length})}</dd><dt>${t('name')}</dt><dd>${esc(b.name)}</dd></dl>
     <p>${t('doneP')}</p><p class="note">${CONFIG.address}<br>${t('shot')}</p>
@@ -206,6 +226,7 @@ const rerender=()=>{clampN();renderPick();renderSide();renderBar()};
 
 /* ---------- 交互 ---------- */
 document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el||el.disabled)return;
+  if(el.classList.contains('meow-cat')){feedCat(el);return}
   if(el.dataset.lang){lang=el.dataset.lang;try{localStorage.setItem('pipi-lang',lang)}catch(x){}renderAll();return}
   if(el.dataset.date){st.date=el.dataset.date;st.msg='';if(st.start!=null&&st.date===todayStr()&&st.start<=nowMin())st.start=null;
     if(st.dur==='free'&&isWeekend(st.date)||[240,360].includes(st.dur)&&!isWeekend(st.date))st.dur=null;rerender();loadBusy();return}
