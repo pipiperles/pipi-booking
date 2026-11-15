@@ -186,7 +186,7 @@ const CAT_BODY=['...OMWWWWWWMO...','..OMDMWWWWMDMO..','..OMMDWWWWDMMO..','..ODMM
 const catRects=(rows,y0)=>rows.map((r,y)=>[...r].map((c,x)=>CAT_PAL[c]?`<rect x="${x}" y="${y+y0}" width="1.02" height="1.02" fill="${CAT_PAL[c]}"/>`:'').join('')).join('');
 const pixelCat=()=>`<svg class="pixcat-svg" viewBox="0 0 16 18" shape-rendering="crispEdges" role="img" aria-label="cat">
   ${catRects(CAT_TOP,0)}${catRects(CAT_BODY,11)}<g class="shut">${catRects(CAT_SHUT,8)}</g><g class="open">${catRects(CAT_OPEN,8)}</g></svg>`;
-/* 点小猫 → 从上面掉下一条像素小鱼 → 猫张嘴吃两口 → 冒一颗像素爱心。可以一直点 */
+/* 点小猫 → 从上面掉下一条像素小鱼 → 猫张嘴吃两口 → 吃完才冒一颗像素爱心。不点就什么都不出现，可以一直点 */
 const FISH_PAL={O:'#3B2C2A',F:'#5FA8D3',f:'#A9DDF2',K:'#2B211C'};
 const FISH=['..OOOO..OO','.OffFFOOFO','OKfFFFFFO.','.OFFFFOOFO','..OOOO..OO'];
 const FHEART_PAL={O:'#3B2C2A',H:'#E8504A',h:'#FFB36B'};
@@ -201,10 +201,10 @@ function feedCat(cat){
   const heart=()=>{const h=add(pix(FHEART,FHEART_PAL,'pix-heart'));
     if(!still)h.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-26px)',opacity:1,offset:.7},{transform:'translateY(-32px)',opacity:0}],{duration:900,easing:'steps(6)',fill:'forwards'});
     setTimeout(()=>h.remove(),900)};
-  if(still){chomp();setTimeout(heart,300);return}
+  if(still){chomp();setTimeout(heart,750);return}
   const f=add(pix(FISH,FISH_PAL,'pix-fish'));
   f.animate([{transform:'translateY(-64px) rotate(-12deg)'},{transform:'translateY(-30px) rotate(10deg)',offset:.5},{transform:'translateY(0) rotate(0)'}],{duration:480,easing:'steps(8)',fill:'forwards'});
-  setTimeout(()=>{f.remove();chomp();setTimeout(heart,350)},480);
+  setTimeout(()=>{f.remove();chomp();setTimeout(heart,750)},480);
 }
 function renderDone(){const b=st.done,d=new Date(b.date+'T12:00:00');
   document.getElementById('bar').innerHTML='';
