@@ -62,7 +62,7 @@ const T={
   submit:'提交预约',submitI:'Valider',sending:'提交中…',
   eName:'请填名字',ePhone:'请填手机号（至少 6 位数字）',eEmail:'邮箱格式不对',
   eConflict:'刚刚这个时段被别人约满了，请换个时间。',eNet:'没提交成功，请检查网络再试一次。',
-  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'到店说名字就行，等你来拼豆～ 要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~'},
+  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~'},
  fr:{title:'PIPIPERLES STUDIO',sub:'Atelier de perles à repasser · PiPi',
   pickT:'Horaire',pickTi:'',
   s1:'Date',s2:'Heure d’arrivée',s3:'Durée',s4:'Combien de personnes ?',
@@ -82,7 +82,7 @@ const T={
   submit:'Réserver',submitI:'',sending:'Envoi…',
   eName:'Indiquez votre nom',ePhone:'Indiquez un numéro (6 chiffres minimum)',eEmail:'E-mail invalide',
   eConflict:'Ce créneau vient d’être complet, choisissez un autre horaire.',eNet:'Échec de l’envoi. Vérifiez la connexion et réessayez.',
-  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'À votre arrivée, donnez simplement votre nom. Pour modifier ou annuler, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation',okT:'Réservé !',meow:'Miaou~'}};
+  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'Pour modifier ou annuler, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation',okT:'Réservé !',meow:'Miaou~'}};
 
 let lang='zh';try{const l=localStorage.getItem('pipi-lang');if(l==='fr'||l==='zh')lang=l;else if(/^fr/i.test(navigator.language))lang='fr'}catch(e){}
 const t=(k,v={})=>String(T[lang][k]).replace(/\{(\w+)\}/g,(_,x)=>v[x]);
@@ -176,16 +176,16 @@ function renderBar(){
   else{const d=new Date(st.date+'T12:00:00');sum=`<b>${d.getMonth()+1}/${d.getDate()} ${wdName(d)} · ${hm(st.start)}–${hm(endOf())} · ${t('people',{n:st.n})}</b>PiPi Studio`}
   document.getElementById('bar').innerHTML=`<div class="in"><div class="sum">${sum}</div><button class="go" id="submit" ${miss.length||st.sending?'disabled':''}>${st.sending?t('sending'):t('submit')}${t('submitI')&&!st.sending?`<i>${t('submitI')}</i>`:''}</button></div>`;
 }
-/* 像素狸花猫：16×16 格，两帧（闭嘴 / 张嘴），只差第 8–10 行 */
-const CAT_PAL={K:'#3B2A22',B:'#B0916C',D:'#5C4431',L:'#F1E4CC',E:'#B9CC3C',P:'#F08BA6'};
-const CAT_TOP=['..K..........K..','.KPK........KPK.','.KPBKKKKKKKKBPK.','KBBBBDBDDBDBBBBK','KBBBBBDBBDBBBBBK',
-  'KBBBEKBBBBKEBBBK','KDBBEKBBBBKEBBDK','KBDBBBBPPBBBBDBK'];
-const CAT_SHUT=['KBBBBLKLLKLBBBBK','.KBBBBLLLLBBBBK.','..KKBBLLLLBBKK..'];
-const CAT_OPEN=['KBBBBLKKKKLBBBBK','.KBBBLKPPKLBBBK.','..KKBBLKKLBBKK..'];
-const CAT_BODY=['...KBBLLLLBBK...','..KBDBLLLLBDBK..','..KBBDLLLLDBBKK.','..KBDBLLLLBDBKDK','..KLLKKKKKKLLKK.'];
+/* 像素狸花猫（温馨农场像素游戏的画法，原创）：20×20 格，两帧（闭嘴 / 张嘴），只差第 10–12 行
+   O 深棕轮廓 D 条纹 M 中间毛色 L 浅毛 W 白肚 K 瞳孔 E 眼睛 P 粉 R 嘴里 */
+const CAT_PAL={O:'#4A3024',D:'#6B4E36',M:'#A88763',L:'#C9AC85',W:'#F4EADA',K:'#2A1C14',E:'#9CBF3A',P:'#E98AA0',R:'#B5455E'};
+const CAT_TOP=['...OO..........OO...','..OMMO........OMMO..','..OMPMO......OMPMO..','.OMPPMOOOOOOOOMPPMO.','.OMMMMDMDDDDMDMMMMO.','OMMMMMMDMMMMDMMMMMMO','OMLLMMMMMMMMMMMMLLMO','OMMMEWKMMMMMMEWKMMMO','ODMMEEKMMMMMMEEKMMDO','OMDMMMMWWPPWWMMMMDMO'];
+const CAT_SHUT=['OMMMMMMWWOOWWMMMMMMO','.OMMMMWOWWWWOWMMMMO.','..OOMMWWWWWWWWMMOO..'];
+const CAT_OPEN=['OMMMMMMWOOOOWMMMMMMO','.OMMMMWORPPROWMMMMO.','..OOMMWWOOOOWWMMOO..'];
+const CAT_BODY=['....OMMWWWWWWMMO....','...OMDMWWWWWWMDMO...','...OMMDWWWWWWDMMO.OO','..OMDMMLWWWWLMMDMOMO','..OMMMMMLLLLMMMMMOMO','..OWWOMMMMMMMMOWWMMO','...OOOOOOOOOOOOOOOO.'];
 const catRects=(rows,y0)=>rows.map((r,y)=>[...r].map((c,x)=>CAT_PAL[c]?`<rect x="${x}" y="${y+y0}" width="1.02" height="1.02" fill="${CAT_PAL[c]}"/>`:'').join('')).join('');
-const pixelCat=()=>`<svg class="pixcat-svg" viewBox="0 0 16 16" shape-rendering="crispEdges" role="img" aria-label="cat">
-  ${catRects(CAT_TOP,0)}${catRects(CAT_BODY,11)}<g class="shut">${catRects(CAT_SHUT,8)}</g><g class="open">${catRects(CAT_OPEN,8)}</g></svg>`;
+const pixelCat=()=>`<svg class="pixcat-svg" viewBox="0 0 20 20" shape-rendering="crispEdges" role="img" aria-label="cat">
+  ${catRects(CAT_TOP,0)}${catRects(CAT_BODY,13)}<g class="shut">${catRects(CAT_SHUT,10)}</g><g class="open">${catRects(CAT_OPEN,10)}</g></svg>`;
 function renderDone(){const b=st.done,d=new Date(b.date+'T12:00:00');
   document.getElementById('bar').innerHTML='';
   document.getElementById('main').innerHTML=`<section class="win" style="grid-column:1/-1">${winBar(t('doneT'),'')}<div class="win-body done">

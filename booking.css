@@ -140,7 +140,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--orange1);outline:none
 
 /* 完成页 */
 .done{text-align:center}
-.done .logo-big{width:min(300px,70vw);height:auto}
+.done .logo-big{display:block;width:96px;height:auto;margin:-4px auto 0}
 .done h2{font:400 40px var(--f-head);color:var(--orange2);margin:6px 0}
 .done dl{display:grid;grid-template-columns:auto auto;justify-content:center;gap:6px 16px;margin:14px 0;font-size:16px;text-align:left}
 .done dt{color:var(--muted)}
