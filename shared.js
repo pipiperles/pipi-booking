@@ -3,7 +3,7 @@
    gasUrl 和 supabase 都留空 = 演示模式（数据只存在本机浏览器） */
 window.PIPI = (function () {
   const CONFIG = {
-    gasUrl: 'https://script.google.com/macros/s/AKfycbxzthU27Rw5TgZxfjML4K6jnLtbMOfjVYToWNfit3za8t7c5jKYMppGBgEmoXNY9v9uaQ/exec',
+    gasUrl: 'https://script.google.com/macros/s/AKfycbwxnPR1LAy40_WUZL7YsAVqzBc0jaJccSumND8BS-NqEWsoitp0PAgMZLOQSQpcO21BZg/exec',
     supabaseUrl: '',
     supabaseKey: '', // Supabase 的 anon public key（公开的，可以放网页里）
     open: 12 * 60, close: 20 * 60, step: 30, maxSeats: 8, daysAhead: 30,
