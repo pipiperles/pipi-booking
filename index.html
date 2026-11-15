@@ -176,16 +176,16 @@ function renderBar(){
   else{const d=new Date(st.date+'T12:00:00');sum=`<b>${d.getMonth()+1}/${d.getDate()} ${wdName(d)} · ${hm(st.start)}–${hm(endOf())} · ${t('people',{n:st.n})}</b>PiPi Studio`}
   document.getElementById('bar').innerHTML=`<div class="in"><div class="sum">${sum}</div><button class="go" id="submit" ${miss.length||st.sending?'disabled':''}>${st.sending?t('sending'):t('submit')}${t('submitI')&&!st.sending?`<i>${t('submitI')}</i>`:''}</button></div>`;
 }
-/* 像素狸花猫（温馨农场像素游戏的画法，原创）：20×20 格，两帧（闭嘴 / 张嘴），只差第 10–12 行
-   O 深棕轮廓 D 条纹 M 中间毛色 L 浅毛 W 白肚 K 瞳孔 E 眼睛 P 粉 R 嘴里 */
-const CAT_PAL={O:'#4A3024',D:'#6B4E36',M:'#A88763',L:'#C9AC85',W:'#F4EADA',K:'#2A1C14',E:'#9CBF3A',P:'#E98AA0',R:'#B5455E'};
-const CAT_TOP=['...OO..........OO...','..OMMO........OMMO..','..OMPMO......OMPMO..','.OMPPMOOOOOOOOMPPMO.','.OMMMMDMDDDDMDMMMMO.','OMMMMMMDMMMMDMMMMMMO','OMLLMMMMMMMMMMMMLLMO','OMMMEWKMMMMMMEWKMMMO','ODMMEEKMMMMMMEEKMMDO','OMDMMMMWWPPWWMMMMDMO'];
-const CAT_SHUT=['OMMMMMMWWOOWWMMMMMMO','.OMMMMWOWWWWOWMMMMO.','..OOMMWWWWWWWWMMOO..'];
-const CAT_OPEN=['OMMMMMMWOOOOWMMMMMMO','.OMMMMWORPPROWMMMMO.','..OOMMWWOOOOWWMMOO..'];
-const CAT_BODY=['....OMMWWWWWWMMO....','...OMDMWWWWWWMDMO...','...OMMDWWWWWWDMMO.OO','..OMDMMLWWWWLMMDMOMO','..OMMMMMLLLLMMMMMOMO','..OWWOMMMMMMMMOWWMMO','...OOOOOOOOOOOOOOOO.'];
+/* 像素狸花猫（原创；画法参考小柱给的像素猫：正面坐姿、胡须伸出脸外、竖条眼、深色描边）
+   16×18 格，两帧（闭嘴 / 张嘴），只差第 8–10 行。O 描边/胡须 D 条纹 M 毛色 L 浅毛 W 白 K 眼 P 粉 R 嘴里 */
+const CAT_PAL={O:'#3B2C2A',D:'#5A4836',M:'#8E7A62',L:'#B4A084',W:'#EADBC0',K:'#2B211C',P:'#E07A8E',R:'#A63E55'};
+const CAT_TOP=['..O..........O..','..OO........OO..','..OPO......OPO..','..OPMOOOOOOMPO..','..OMMDMDDMDMMO..','..OMMMMMMMMMMO..','.OOMKMMMMMMKMOO.','OOOMKMWPPWMKMOOO'];
+const CAT_SHUT=['.OOMMWWOOWWMMOO.','..OMMWWWWWWMMO..','...OOMWWWWMOO...'];
+const CAT_OPEN=['.OOMMWOOOOWMMOO.','..OMMWORROWMMO..','...OOMWOOWMOO...'];
+const CAT_BODY=['...OMWWWWWWMO...','..OMDMWWWWMDMO..','..OMMDWWWWDMMO..','..ODMMLWWLMMDO.O','..OMMMMLLMMMMOMO','..OWWOMMMMOWWMMO','...OOOOOOOOOOOO.'];
 const catRects=(rows,y0)=>rows.map((r,y)=>[...r].map((c,x)=>CAT_PAL[c]?`<rect x="${x}" y="${y+y0}" width="1.02" height="1.02" fill="${CAT_PAL[c]}"/>`:'').join('')).join('');
-const pixelCat=()=>`<svg class="pixcat-svg" viewBox="0 0 20 20" shape-rendering="crispEdges" role="img" aria-label="cat">
-  ${catRects(CAT_TOP,0)}${catRects(CAT_BODY,13)}<g class="shut">${catRects(CAT_SHUT,10)}</g><g class="open">${catRects(CAT_OPEN,10)}</g></svg>`;
+const pixelCat=()=>`<svg class="pixcat-svg" viewBox="0 0 16 18" shape-rendering="crispEdges" role="img" aria-label="cat">
+  ${catRects(CAT_TOP,0)}${catRects(CAT_BODY,11)}<g class="shut">${catRects(CAT_SHUT,8)}</g><g class="open">${catRects(CAT_OPEN,8)}</g></svg>`;
 function renderDone(){const b=st.done,d=new Date(b.date+'T12:00:00');
   document.getElementById('bar').innerHTML='';
   document.getElementById('main').innerHTML=`<section class="win" style="grid-column:1/-1">${winBar(t('doneT'),'')}<div class="win-body done">
