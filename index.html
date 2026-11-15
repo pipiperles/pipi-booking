@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PiPi 拼豆预约</title>
+<meta name="description" content="PiPi 拼豆 · Paris 1er · 在线预约 / Réservation en ligne">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
+<link rel="stylesheet" href="booking.css">
+</head>
+<body>
+<div class="wrap">
+  <!-- 装饰 -->
+  <div class="deco cd" aria-hidden="true"></div>
+  <div class="deco checker hide-sm" style="right:0;top:0" aria-hidden="true"></div>
+  <img class="deco butterfly" src="img/butterfly.png" alt="" aria-hidden="true">
+  <img class="deco" src="img/heart-pink.png" alt="" aria-hidden="true" style="width:40px;left:min(46%,420px);top:26px">
+  <img class="deco" src="img/star-gold.png" alt="" aria-hidden="true" style="width:30px;left:min(58%,540px);top:12px">
+  <img class="deco hide-sm" src="img/sparkle.png" alt="" aria-hidden="true" style="width:30px;right:30px;top:96px">
+  <img class="deco hide-sm" src="img/sparkle.png" alt="" aria-hidden="true" style="width:22px;left:8px;top:150px">
+
+  <header class="top">
+    <img class="logo" src="pipi-logo.png" alt="PiPi Studio" width="660" height="240">
+    <div class="title"><h1 id="t-title"></h1><p id="t-sub"></p></div>
+    <div class="lang"><button data-lang="zh">中文</button><button data-lang="fr">FR</button></div>
+  </header>
+  <div class="addr"><svg width="14" height="18" viewBox="0 0 14 18" aria-hidden="true"><path d="M7 1a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6z" fill="#F4511E"/><circle cx="7" cy="7" r="2.3" fill="#fff"/></svg><span id="addr"></span></div>
+
+  <main class="layout" id="main">
+    <div>
+      <section class="win" id="pick"></section>
+      <section class="win" id="contact"></section>
+    </div>
+    <aside class="side" id="side"></aside>
+  </main>
+</div>
+<div class="bar" id="bar"></div>
+
+<script src="shared.js"></script>
+<script>
+/* 流程：选哪天 → 几点来 → 待多久 → 几个人 → 填联系方式 → 提交
+   客人不选座位：系统按人数把座位自动分到店里的桌子上（优先整拨人坐同一张桌） */
+const {CONFIG,TABLES,seatIds,ALL_SEATS,ymd,hm,esc,overlap,api}=PIPI;
+const T={
+ zh:{title:'拼豆预约',sub:'Réservation de perles à repasser',
+  pickT:'选时间 (｡･ω･｡)ﾉ',pickTi:'Choisir l’horaire',
+  s1:'哪天来玩',s2:'几点来',s3:'待多久',s4:'几个人 (๑•̀ㅂ•́)و✧',
+  wd:'日一二三四五六',wdp:'周',today:'今天',
+  h:'小时',free:'不限时',untilClose:'到 20:00',hourly:'按时 {r} €',p4:'4h 套餐 32 €',p6:'6h 套餐 42 €',freeP:'35 €',
+  weekendNote:'周末和节假日没有不限时，4 小时、6 小时有套餐价。',priceNote:'价格每人，仅供参考，到店按实际时长结算。',
+  maxNote:'一次最多约 {n} 人。更多人或包场，请直接联系店主。',noRoom:'这个时段约满了，换个时间试试。',
+  leftT:'当前时段剩余',leftTi:'Places disponibles',seatU:'座',seatUi:'places',pickFirst:'选好时间后显示',fullW:'约满',
+  mineT:'你的预约 ♡',mineTi:'Votre réservation',kDate:'哪天',kTime:'时间',kPpl:'人数',none:'还没选',
+  demo:'演示模式：预约只存在这台设备上，不是真的预约。',
+  tipsT:'温馨提示',tipsTi:'(=^･ω･^=)',
+  tips:['请准备好<b>镜像图纸</b>','拼豆新手不用担心，店主<b>包教包会</b>哦！(๑•̀ㅂ•́)و✧','店内不方便自带饮食，请您理解 (´｡• ᵕ •｡`)','店内有超多<b>奶茶和糖水</b>供您选择，都享受 <b>8 折</b>优惠 ☆*:.｡. o(≧▽≦)o .｡.:*☆'],
+  contactT:'联系方式 ✉',contactTi:'Vos coordonnées',
+  name:'名字',phone:'手机号',wechat:'微信号',xhs:'小红书',email:'邮箱',note:'备注（比如带小朋友）',
+  privacy:'名字和电话只用来联系你这次预约，只有店主能看到，预约日期过后 3 个月删除。',
+  notYet:'还没选完：',needDate:'哪天',needTime:'几点',needDur:'待多久',needPpl:'人数',people:'{n} 人',
+  submit:'提交预约',submitI:'Valider',sending:'提交中…',
+  eName:'请填名字',ePhone:'请填手机号（至少 6 位数字）',eEmail:'邮箱格式不对',
+  eConflict:'刚刚这个时段被别人约满了，请换个时间。',eNet:'没提交成功，请检查网络再试一次。',
+  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'到店说名字就行，等你来拼豆～ 要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次'},
+ fr:{title:'Réserver',sub:'Atelier de perles à repasser · PiPi',
+  pickT:'Horaire',pickTi:'',
+  s1:'Date',s2:'Heure d’arrivée',s3:'Durée',s4:'Combien de personnes ?',
+  wd:['dim','lun','mar','mer','jeu','ven','sam'],wdp:'',today:'auj.',
+  h:'h',free:'Illimité',untilClose:'jusqu’à 20h',hourly:'{r} €',p4:'forfait 32 €',p6:'forfait 42 €',freeP:'35 €',
+  weekendNote:'Le week-end et les jours fériés : forfaits 4h et 6h, pas d’illimité.',priceNote:'Prix par personne, indicatifs, réglés sur place selon la durée réelle.',
+  maxNote:'{n} personnes maximum. Pour un groupe plus grand ou une privatisation, contactez-nous.',noRoom:'Complet sur ce créneau, essayez un autre horaire.',
+  leftT:'Places disponibles',leftTi:'sur ce créneau',seatU:'',seatUi:'places',pickFirst:'après le choix de l’horaire',fullW:'Complet',
+  mineT:'Votre réservation',mineTi:'',kDate:'Date',kTime:'Heure',kPpl:'Personnes',none:'—',
+  demo:'Mode démo : la réservation reste sur cet appareil, elle n’est pas réelle.',
+  tipsT:'Bon à savoir',tipsTi:'(=^･ω･^=)',
+  tips:['Préparez votre <b>modèle en miroir</b>','Débutant·e ? Pas de souci, on vous <b>apprend tout</b> ! (๑•̀ㅂ•́)و✧','Merci de ne pas apporter de nourriture ni de boissons (´｡• ᵕ •｡`)','Grand choix de <b>thés au lait et desserts</b>, tous à <b>-20 %</b> ☆*:.｡. o(≧▽≦)o .｡.:*☆'],
+  contactT:'Vos coordonnées',contactTi:'',
+  name:'Nom ou prénom',phone:'Téléphone',wechat:'WeChat',xhs:'Xiaohongshu',email:'E-mail',note:'Remarque (enfants, etc.)',
+  privacy:'Vos coordonnées servent uniquement à vous contacter pour cette réservation. Seule la gérante y a accès ; elles sont supprimées 3 mois après la date réservée.',
+  notYet:'À compléter : ',needDate:'date',needTime:'heure',needDur:'durée',needPpl:'personnes',people:'{n} pers.',
+  submit:'Réserver',submitI:'',sending:'Envoi…',
+  eName:'Indiquez votre nom',ePhone:'Indiquez un numéro (6 chiffres minimum)',eEmail:'E-mail invalide',
+  eConflict:'Ce créneau vient d’être complet, choisissez un autre horaire.',eNet:'Échec de l’envoi. Vérifiez la connexion et réessayez.',
+  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'À votre arrivée, donnez simplement votre nom. Pour modifier ou annuler, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation'}};
+
+let lang='zh';try{const l=localStorage.getItem('pipi-lang');if(l==='fr'||l==='zh')lang=l;else if(/^fr/i.test(navigator.language))lang='fr'}catch(e){}
+const t=(k,v={})=>String(T[lang][k]).replace(/\{(\w+)\}/g,(_,x)=>v[x]);
+const st={date:null,start:null,dur:null,n:null,busy:[],form:{code:'+33',phone:'',name:'',wechat:'',xhs:'',email:'',note:''},errors:{},msg:'',sending:false,done:null};
+
+/* ---------- 小装饰 ---------- */
+const SPARKLE='<svg class="sparkle" viewBox="0 0 24 24"><path d="M12 1C13 8 16 11 23 12C16 13 13 16 12 23C11 16 8 13 1 12C8 11 11 8 12 1Z" fill="#FFE066" stroke="#F2A900" stroke-width="1.2"/></svg>';
+function pixelSVG(rows,pal,size){const w=rows[0].length,h=rows.length;let r='';
+  rows.forEach((row,y)=>[...row].forEach((c,x)=>{if(pal[c])r+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[c]}"/>`}));
+  return `<svg viewBox="0 0 ${w} ${h}" width="${size*w}" height="${size*h}" shape-rendering="crispEdges">${r}</svg>`}
+const HEART=pixelSVG([".PP.PP.","PWPPPPP","PPPPPPP",".PPPPP.","..PPP..","...P..."],{P:'#F7A1C4',W:'#FFFFFF'},5);
+const CAT=pixelSVG([
+  "..B........B..",".BOB......BOB.",".BOOB....BOOB.",".BOSOBBBBOSOB.","BOOOSOSSOSOOOB","BOOOOOOOOOOOOB",
+  "BOKWOOOOOOKWOB","BOKKOOOOOOKKOB","BOOOOOPPOOOOOB","BWOOOOOOOOOOWB",".BOOOOOOOOOOB.","..BBBBBBBBBB.."],
+  {B:'#5B3A29',O:'#F2A65A',S:'#C66A2B',K:'#2B1B12',W:'#FFFFFF',P:'#F48FB1'},5);
+function burstPath(){let p='';const n=14;for(let i=0;i<n*2;i++){const a=Math.PI*i/n,r=i%2?0.72:1;p+=(i?'L':'M')+(50+48*r*Math.cos(a)).toFixed(1)+' '+(50+48*r*Math.sin(a)*0.72).toFixed(1)}return p+'Z'}
+const BURST=`<svg viewBox="0 6 100 88" preserveAspectRatio="none"><path d="${burstPath()}" fill="#FFD3E6" stroke="#F06BA8" stroke-width="2"/></svg>`;
+
+/* ---------- 计算 ---------- */
+const isWeekend=ds=>{const d=new Date(ds+'T12:00:00').getDay();return d===0||d===6};
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const todayStr=()=>ymd(new Date());
+const endOf=()=>st.dur==='free'?CONFIG.close:st.start+st.dur;
+const ready=()=>st.date&&st.start!=null&&st.dur!=null;
+const wdName=d=>lang==='zh'?t('wdp')+T.zh.wd[d.getDay()]:T.fr.wd[d.getDay()];
+function takenSet(){const s=new Set();if(!ready())return s;const w={start:st.start,end:endOf()};
+  for(const b of st.busy)if(overlap(w,b))b.seats.forEach(x=>s.add(x));return s}
+const freeCount=()=>ALL_SEATS.length-takenSet().size;
+/* 自动分座：先找一张能坐下整拨人的桌（空位最少的那张），坐不下再从空位多的桌开始拼 */
+function assignSeats(n){const tk=takenSet();
+  const tabs=TABLES.map(tb=>({free:seatIds(tb).filter(s=>!tk.has(s))})).filter(x=>x.free.length);
+  const one=tabs.filter(x=>x.free.length>=n).sort((a,b)=>a.free.length-b.free.length)[0];
+  if(one)return one.free.slice(0,n);
+  const out=[];tabs.sort((a,b)=>b.free.length-a.free.length).forEach(x=>x.free.forEach(s=>{if(out.length<n)out.push(s)}));
+  return out.length===n?out:null}
+function durOptions(ds){return isWeekend(ds)
+  ?[{v:60,p:t('hourly',{r:10})},{v:120,p:t('hourly',{r:20})},{v:180,p:t('hourly',{r:30})},{v:240,p:t('p4')},{v:360,p:t('p6')}]
+  :[{v:60,p:t('hourly',{r:10})},{v:120,p:t('hourly',{r:20})},{v:180,p:t('hourly',{r:30})},{v:'free',p:t('freeP')}]}
+async function loadBusy(){try{st.busy=await api.busy(st.date)}catch(e){st.busy=[];st.msg=t('eNet')}clampN();renderPick();renderSide();renderBar()}
+function clampN(){if(st.n!=null&&ready()&&st.n>Math.min(freeCount(),CONFIG.maxSeats))st.n=null}
+
+/* ---------- 渲染 ---------- */
+const winBar=(title,sub)=>`<div class="win-bar"><h2>${title}${sub?` <i>${sub}</i>`:''}</h2><div class="win-btns" aria-hidden="true"><span>–</span><span>□</span><span>×</span></div></div>`;
+function renderPick(){
+  const days=[];for(let i=0;i<CONFIG.daysAhead;i++){const d=new Date();d.setDate(d.getDate()+i);days.push(d)}
+  const ds=st.date,times=[];for(let m=CONFIG.open;m<CONFIG.close;m+=CONFIG.step)times.push(m);
+  const past=m=>ds===todayStr()&&m<=nowMin();
+  const free=ready()?freeCount():0,max=Math.min(free,CONFIG.maxSeats);
+  document.getElementById('pick').innerHTML=winBar(t('pickT'),t('pickTi'))+`<img class="palm" src="img/palm.png" alt="" aria-hidden="true"><img class="plant" src="img/plant.png" alt="" aria-hidden="true"><div class="win-body">
+   <div class="q"><h3>${t('s1')}</h3><div class="days">${days.map((d,i)=>{const v=ymd(d);
+     return `<button class="day ${isWeekend(v)?'we':''} ${v===ds?'on':''}" data-date="${v}"><small>${i===0?t('today'):wdName(d)}</small><b>${d.getDate()}</b><small>${d.getMonth()+1}${lang==='zh'?'月':'/'}</small></button>`}).join('')}</div></div>
+   <div class="q ${ds?'':'off'}"><h3>${t('s2')}</h3><div class="grid">${times.map(m=>`<button class="opt ${m===st.start?'on':''}" data-start="${m}" ${!ds||past(m)?'disabled':''}>${hm(m)}</button>`).join('')}</div></div>
+   <div class="q ${ds&&st.start!=null?'':'off'}"><h3>${t('s3')}</h3><div class="grid">${(ds?durOptions(ds):durOptions(todayStr())).map(o=>{const over=o.v!=='free'&&st.start!=null&&st.start+o.v>CONFIG.close;
+     return `<button class="opt ${o.v===st.dur?'on':''}" data-dur="${o.v}" ${over||st.start==null?'disabled':''}>${o.v==='free'?t('free'):(o.v/60)+' '+t('h')}<small>${o.v==='free'?t('untilClose')+' · ':''}${o.p}</small></button>`}).join('')}</div>
+     <p class="note">${ds&&isWeekend(ds)?t('weekendNote')+' ':''}${t('priceNote')}</p></div>
+   <div class="q ${ready()?'':'off'}"><h3>${t('s4')}</h3>
+     ${ready()&&!free?`<p class="err">${t('noRoom')}</p>`:`<div class="ppl">${Array.from({length:CONFIG.maxSeats},(_,i)=>i+1).map(n=>`<button class="opt ${n===st.n?'on':''}" data-n="${n}" ${!ready()||n>max?'disabled':''}>${n}</button>`).join('')}</div>
+     <p class="note">${t('maxNote',{n:CONFIG.maxSeats})}</p>`}
+     ${st.msg?`<p class="err">${esc(st.msg)}</p>`:''}</div>
+  </div>`;
+}
+function renderSide(){
+  const r=ready();
+  let when=t('none');
+  if(st.date){const d=new Date(st.date+'T12:00:00');when=`${d.getMonth()+1}/${d.getDate()} ${wdName(d)}`}
+  document.getElementById('side').innerHTML=`
+  <section class="win mine">${winBar(t('mineT'),t('mineTi'))}<div class="win-body"><dl>
+    <dt>${t('kDate')}</dt><dd>${when}</dd>
+    <dt>${t('kTime')}</dt><dd>${r?hm(st.start)+'–'+hm(endOf()):st.start!=null?hm(st.start):t('none')}</dd>
+    <dt>${t('kPpl')}</dt><dd>${st.n?t('people',{n:st.n}):t('none')}</dd></dl></div></section>
+  <section class="win tips">${winBar(t('tipsT'),t('tipsTi'))}<div class="win-body"><ul>${T[lang].tips.map(x=>`<li>${x}</li>`).join('')}</ul></div></section>
+  ${api.live?'':`<div class="sticky"><img class="pixcat" src="img/pixelcat.png" alt="" aria-hidden="true">${t('demo')}${lang==='zh'?`<i>${T.fr.demo}</i>`:''}</div>`}
+  <img class="tama" src="img/tamagotchi.png" alt="" aria-hidden="true">`;
+}
+function renderContact(){const f=st.form,e=st.errors;
+  document.getElementById('contact').innerHTML=winBar(t('contactT'),t('contactTi'))+`<img class="heart-big" src="img/heart-big.png" alt="" aria-hidden="true"><div class="win-body">
+  <label class="field"><span>${t('name')} <em>*</em></span><input type="text" id="f-name" autocomplete="name" maxlength="60" value="${esc(f.name)}">${e.name?`<span class="err">${t('eName')}</span>`:''}</label>
+  <div class="field"><span>${t('phone')} <em>*</em></span><div class="phone">
+    <select id="f-code" aria-label="code">${['+33','+86','+852','+886','+44','+49','+39','+34','+32','+41','+1'].map(c=>`<option ${c===f.code?'selected':''}>${c}</option>`).join('')}</select>
+    <input type="tel" id="f-phone" autocomplete="tel-national" inputmode="tel" maxlength="20" placeholder="6 12 34 56 78" value="${esc(f.phone)}"></div>${e.phone?`<span class="err">${t('ePhone')}</span>`:''}</div>
+  <label class="field"><span>${t('wechat')}</span><input type="text" id="f-wechat" maxlength="60" value="${esc(f.wechat)}"></label>
+  <label class="field"><span>${t('xhs')}</span><input type="text" id="f-xhs" maxlength="60" value="${esc(f.xhs)}"></label>
+  <label class="field"><span>${t('email')}</span><input type="email" id="f-email" autocomplete="email" maxlength="120" value="${esc(f.email)}">${e.email?`<span class="err">${t('eEmail')}</span>`:''}</label>
+  <label class="field"><span>${t('note')}</span><textarea id="f-note" rows="2" maxlength="500">${esc(f.note)}</textarea></label>
+  <p class="privacy">${t('privacy')}</p></div>`;
+}
+function renderBar(){
+  const miss=[];if(!st.date)miss.push(t('needDate'));if(st.start==null)miss.push(t('needTime'));if(st.dur==null)miss.push(t('needDur'));if(!st.n)miss.push(t('needPpl'));
+  let sum;
+  if(miss.length)sum=`${t('notYet')}${miss.join(lang==='zh'?'、':', ')}`;
+  else{const d=new Date(st.date+'T12:00:00');sum=`<b>${d.getMonth()+1}/${d.getDate()} ${wdName(d)} · ${hm(st.start)}–${hm(endOf())} · ${t('people',{n:st.n})}</b>PiPi Studio`}
+  document.getElementById('bar').innerHTML=`<div class="in"><div class="sum">${sum}</div><button class="go" id="submit" ${miss.length||st.sending?'disabled':''}>${st.sending?t('sending'):t('submit')}${t('submitI')&&!st.sending?`<i>${t('submitI')}</i>`:''}</button></div>`;
+}
+function renderDone(){const b=st.done,d=new Date(b.date+'T12:00:00');
+  document.getElementById('bar').innerHTML='';
+  document.getElementById('main').innerHTML=`<section class="win" style="grid-column:1/-1">${winBar(t('doneT'),'')}<div class="win-body done">
+    <img class="logo-big" src="pipi-logo.png" alt="" width="660" height="240"><h2>${t('doneT')}</h2>
+    <dl><dt>${t('kDate')}</dt><dd>${d.getMonth()+1}/${d.getDate()} ${wdName(d)}</dd><dt>${t('kTime')}</dt><dd>${hm(b.start)}–${hm(b.end)}</dd>
+    <dt>${t('kPpl')}</dt><dd>${t('people',{n:b.seats.length})}</dd><dt>${t('name')}</dt><dd>${esc(b.name)}</dd></dl>
+    <p>${t('doneP')}</p><p class="note">${CONFIG.address}<br>${t('shot')}</p>
+    <p><button class="btn2" id="again">${t('again')}</button></p></div></section>`;
+}
+function renderAll(){document.documentElement.lang=lang==='zh'?'zh-CN':'fr';
+  document.getElementById('t-title').textContent=t('title');document.getElementById('t-sub').textContent=t('sub');
+  document.getElementById('addr').textContent=CONFIG.address;
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===lang));
+  if(st.done){renderDone();return}
+  renderPick();renderSide();renderContact();renderBar()}
+const rerender=()=>{clampN();renderPick();renderSide();renderBar()};
+
+/* ---------- 交互 ---------- */
+document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el||el.disabled)return;
+  if(el.dataset.lang){lang=el.dataset.lang;try{localStorage.setItem('pipi-lang',lang)}catch(x){}renderAll();return}
+  if(el.dataset.date){st.date=el.dataset.date;st.msg='';if(st.start!=null&&st.date===todayStr()&&st.start<=nowMin())st.start=null;
+    if(st.dur==='free'&&isWeekend(st.date)||[240,360].includes(st.dur)&&!isWeekend(st.date))st.dur=null;rerender();loadBusy();return}
+  if(el.dataset.start){st.start=+el.dataset.start;st.msg='';if(st.dur!=null&&st.dur!=='free'&&st.start+st.dur>CONFIG.close)st.dur=null;rerender();return}
+  if(el.dataset.dur){st.dur=el.dataset.dur==='free'?'free':+el.dataset.dur;st.msg='';rerender();return}
+  if(el.dataset.n){st.n=+el.dataset.n;rerender();return}
+  if(el.id==='submit'){submit();return}
+  if(el.id==='again'){location.reload()}
+});
+document.addEventListener('input',e=>{const id=e.target.id;if(!id||!id.startsWith('f-'))return;st.form[id.slice(2)]=e.target.value});
+
+async function submit(){const f=st.form,er={};
+  if(!f.name.trim())er.name=1;
+  if(f.phone.replace(/\D/g,'').length<6)er.phone=1;
+  if(f.email.trim()&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.trim()))er.email=1;
+  st.errors=er;if(Object.keys(er).length){renderContact();document.getElementById('contact').scrollIntoView({behavior:'smooth'});return}
+  st.sending=true;renderBar();
+  const base={date:st.date,start:st.start,end:endOf(),
+    plan:st.dur==='free'?'free':(isWeekend(st.date)&&st.dur===240?'p4':isWeekend(st.date)&&st.dur===360?'p6':'hour'),
+    people:st.n,name:f.name.trim(),phone:f.code+' '+f.phone.trim(),wechat:f.wechat.trim(),xhs:f.xhs.trim(),email:f.email.trim(),note:f.note.trim(),lang};
+  try{
+    for(let attempt=0;attempt<2;attempt++){   // 座位被别人刚抢走：刷新一次重新分座再试
+      const seats=assignSeats(st.n);
+      if(!seats)break;
+      const r=await api.create({...base,seats});
+      if(r.ok){st.done={...base,seats:r.seats||seats};st.sending=false;renderAll();window.scrollTo(0,0);return}
+      st.busy=await api.busy(st.date);
+    }
+    st.sending=false;st.msg=t('eConflict');clampN();renderPick();renderSide();renderBar();document.getElementById('pick').scrollIntoView({behavior:'smooth'});
+  }catch(x){st.sending=false;st.msg=t('eNet');renderPick();renderBar()}
+}
+renderAll();
+</script>
+</body>
+</html>
