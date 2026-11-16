@@ -224,3 +224,4 @@ button.meow-cat:active .pixcat-svg{transform:translateY(1px)}
   box-shadow:0 -3px 0 var(--win-edge),0 3px 0 var(--win-edge),-3px 0 0 var(--win-edge),3px 0 0 var(--win-edge)}
 .pnav a[aria-current="page"]{background:var(--win-edge);color:#fff}
 .pnav a:hover:not([aria-current]){background:#FFF0F6}
+.pnav a[aria-current="page"]{color:#fff!important}
