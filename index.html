@@ -7,7 +7,7 @@
 <meta name="format-detection" content="telephone=no, address=no, email=no, date=no">
 <meta name="description" content="PiPi 拼豆 · Paris 1er · 在线预约 / Réservation en ligne">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
-<link rel="stylesheet" href="booking.css?v=20261116c">
+<link rel="stylesheet" href="booking.css?v=20261116f">
 </head>
 <body>
 <div class="wrap">
@@ -38,13 +38,13 @@
 </div>
 <div class="bar" id="bar"></div>
 
-<script src="shared.js?v=20261116c"></script>
+<script src="shared.js?v=20261116f"></script>
 <script>
 /* 流程：选哪天 → 几点来 → 待多久 → 几个人 → 填联系方式 → 提交
    客人不选座位：系统按人数把座位自动分到店里的桌子上（优先整拨人坐同一张桌） */
 const {CONFIG,TABLES,seatIds,ALL_SEATS,ymd,hm,esc,overlap,api}=PIPI;
 const T={
- zh:{title:'PIPI 拼豆',navBook:'预约拼豆',navAlbum:'我的图鉴 ✿',sub:'Réservation de perles à repasser',
+ zh:{title:'PIPI 拼豆',navBook:'预约拼豆',navAlbum:'我的主页 ✿',sub:'Réservation de perles à repasser',
   pickT:'选时间 (｡･ω･｡)ﾉ',pickTi:'Choisir l’horaire',
   s1:'哪天来玩',s2:'几点来',s3:'待多久',s4:'几个人 (๑•̀ㅂ•́)و✧',
   wd:'日一二三四五六',wdp:'周',today:'今天',
@@ -63,8 +63,8 @@ const T={
   submit:'提交预约',submitI:'Valider',sending:'提交中…',
   eName:'请填一个昵称',ePhone:'请填手机号（至少 6 位数字）',eEmail:'邮箱格式不对',eContact:'手机号和邮箱至少填一个',
   eConflict:'刚刚这个时段被别人约满了，请换个时间。',eNet:'没提交成功，请检查网络再试一次。',
-  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'要改时间或取消，请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~',feed:'喂小猫一条鱼'},
- fr:{title:'PIPIPERLES STUDIO',navBook:'Réserver',navAlbum:'Mon album ✿',sub:'Atelier de perles à repasser · PiPi',
+  doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'要取消可以在「我的主页」里自己取消；要改时间请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~',feed:'喂小猫一条鱼'},
+ fr:{title:'PIPIPERLES STUDIO',navBook:'Réserver',navAlbum:'Mon espace ✿',sub:'Atelier de perles à repasser · PiPi',
   pickT:'Horaire',pickTi:'',
   s1:'Date',s2:'Heure d’arrivée',s3:'Durée',s4:'Combien de personnes ?',
   wd:['dim','lun','mar','mer','jeu','ven','sam'],wdp:'',today:'auj.',
@@ -83,7 +83,7 @@ const T={
   submit:'Réserver',submitI:'',sending:'Envoi…',
   eName:'Indiquez un pseudo',ePhone:'Indiquez un numéro (6 chiffres minimum)',eEmail:'E-mail invalide',eContact:'Indiquez un téléphone ou un e-mail',
   eConflict:'Ce créneau vient d’être complet, choisissez un autre horaire.',eNet:'Échec de l’envoi. Vérifiez la connexion et réessayez.',
-  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'Pour modifier ou annuler, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation',okT:'Réservé !',meow:'Miaou~',feed:'Donner un poisson au chat'}};
+  doneT:'C’est réservé ! ヽ(✿ﾟ▽ﾟ)ノ',doneP:'Pour annuler, utilisez « Mon espace ». Pour modifier, prévenez-nous à l’avance.',shot:'Pensez à faire une capture d’écran.',again:'Nouvelle réservation',okT:'Réservé !',meow:'Miaou~',feed:'Donner un poisson au chat'}};
 
 let lang='zh';try{const l=localStorage.getItem('pipi-lang');if(l==='fr'||l==='zh')lang=l;else if(/^fr/i.test(navigator.language))lang='fr'}catch(e){}
 const t=(k,v={})=>String(T[lang][k]).replace(/\{(\w+)\}/g,(_,x)=>v[x]);
@@ -256,7 +256,8 @@ async function submit(){const f=st.form,er={};
       const seats=assignSeats(st.n);
       if(!seats)break;
       const r=await api.create({...base,seats});
-      if(r.ok){st.done={...base,seats:r.seats||seats};st.sending=false;renderAll();window.scrollTo(0,0);return}
+      if(r.ok){try{localStorage.setItem('pipi-me',JSON.stringify({name:f.name.trim(),code:f.code,phone:f.phone.trim(),email:f.email.trim()}))}catch(x){}   // 记住联系方式，「我的主页」直接显示预约
+        st.done={...base,seats:r.seats||seats};st.sending=false;renderAll();window.scrollTo(0,0);return}
       st.busy=await api.busy(st.date);
     }
     st.sending=false;st.msg=t('eConflict');clampN();renderPick();renderSide();renderBar();document.getElementById('pick').scrollIntoView({behavior:'smooth'});
