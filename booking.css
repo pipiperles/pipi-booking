@@ -217,3 +217,10 @@ button.meow-cat:active .pixcat-svg{transform:translateY(1px)}
 /* 手机号 / 邮箱二选一的说明 */
 .contact-hint{margin:2px 0 8px;font-size:14px;color:var(--muted)}
 .contact-hint.bad{color:var(--orange2);font-weight:600}
+
+/* 页面之间的导航：预约 / 我的图鉴（复古窗口的方角标签页） */
+.pnav{position:relative;z-index:2;display:flex;gap:6px;margin:0 0 14px}
+.pnav a{padding:6px 14px;background:#fff;color:var(--win-ink);text-decoration:none;font:400 16px var(--f-head);
+  box-shadow:0 -3px 0 var(--win-edge),0 3px 0 var(--win-edge),-3px 0 0 var(--win-edge),3px 0 0 var(--win-edge)}
+.pnav a[aria-current="page"]{background:var(--win-edge);color:#fff}
+.pnav a:hover:not([aria-current]){background:#FFF0F6}

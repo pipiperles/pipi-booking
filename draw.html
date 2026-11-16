@@ -80,6 +80,7 @@
 <div class="dwrap">
   <div class="dhead"><img src="pipi-logo.png" alt="PiPi Studio" width="660" height="240"><h1 id="t-h1">抽签</h1>
     <div class="lang2"><button data-lang="zh">中</button><button data-lang="fr">FR</button></div></div>
+  <nav class="pnav"><a href="./" id="nav-book"></a><a href="draw.html" id="nav-album"></a></nav>
   <section class="win" id="formWin"></section>
   <section class="win" id="resWin" hidden style="margin-top:16px"></section>
   <section class="win" id="albWin" hidden style="margin-top:16px"></section>
@@ -99,7 +100,7 @@ const API = (window.PIPI && window.PIPI.CONFIG && window.PIPI.CONFIG.gasUrl) || 
 const code = new URLSearchParams(location.search).get('c') || '';
 const A = Object.fromEntries(PIPI_ANIMALS.map(a => [a.key, a]));
 const T = {
-  zh: {h1: '抽签', fT: code ? '来抽一只小可爱 (｡･ω･｡)ﾉ' : '我的图鉴', fTi: code ? 'Tirage' : 'Album',
+  zh: {navBook: '预约拼豆', navAlbum: '我的图鉴 ✿', h1: '抽签', fT: code ? '来抽一只小可爱 (｡･ω･｡)ﾉ' : '我的图鉴', fTi: code ? 'Tirage' : 'Album',
     note: code ? '每个手机号或邮箱每天能抽 1 次，抽到的不会重复。集满任意 10 样，免费拼豆一次！' : '在店里扫柜台的二维码就能抽签。这里可以看你已经捉到的小可爱。',
     name: '昵称', phone: '手机号', email: '邮箱', or: '手机号和邮箱填一个就行（以后用同一个来认你）',
     go: '抽一只！', look: '看我的图鉴', sending: '抽签中…',
@@ -108,7 +109,7 @@ const T = {
     e: {CODE: '二维码过期啦，请重新扫一下柜台的码', TODAY: '今天已经抽过啦，明天再来～', ALL: '所有小可爱都捉齐啦，等冬日限定吧 ❄', CONTACT: '请填手机号或邮箱', NAME: '请填昵称（和第一次抽的时候一样）', NET: '网络有点问题，再试一次？'},
     freeT: '免费拼豆一次！', freeP: '已经捉到 10 只小可爱啦 (≧▽≦)<br>不限时 · 下次到店在「我的图鉴」里给店主看', ok: '收下啦 ♡',
     fsay: '喵呜汪~ 吱吱嘎嘎！<br>哼哼啪呜，呱呱噜 ♪', fsub: '欢迎你回到森林'},
-  fr: {h1: 'Tirage', fT: code ? 'Attrape un petit ami (｡･ω･｡)ﾉ' : 'Mon album', fTi: code ? '抽签' : '图鉴',
+  fr: {navBook: 'Réserver', navAlbum: 'Mon album ✿', h1: 'Tirage', fT: code ? 'Attrape un petit ami (｡･ω･｡)ﾉ' : 'Mon album', fTi: code ? '抽签' : '图鉴',
     note: code ? 'Un tirage par jour et par téléphone ou e-mail, jamais deux fois le même. Avec 10 trouvailles, une session de perles offerte !' : 'Scannez le QR code au comptoir pour tirer. Ici, vous voyez vos trouvailles.',
     name: 'Pseudo', phone: 'Téléphone', email: 'E-mail', or: 'Téléphone ou e-mail (le même à chaque fois)',
     go: 'Tirer !', look: 'Voir mon album', sending: 'Tirage…',
@@ -131,7 +132,9 @@ const bar = (tt, ti) => `<div class="win-bar"><h2>${tt}<i>${ti}</i></h2><div cla
 
 function renderForm() {
   document.documentElement.lang = lang === 'fr' ? 'fr' : 'zh-CN';
-  $('t-h1').textContent = t().h1;
+  $('t-h1').textContent = code ? t().h1 : t().navAlbum.replace(' ✿', '');
+  $('nav-book').textContent = t().navBook; $('nav-album').textContent = t().navAlbum;
+  if (!code) $('nav-album').setAttribute('aria-current', 'page');
   document.querySelectorAll('.lang2 button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
   const codes = ['+33', '+86', '+852', '+886', '+44', '+49', '+39', '+34', '+32', '+41', '+1'];
   $('formWin').innerHTML = bar(t().fT, t().fTi) + `<div class="win-body"><p class="dnote">${t().note}</p>
@@ -224,6 +227,7 @@ document.addEventListener('click', e => {
   if (b.id === 'fclose') $('fpop').hidden = true;
 });
 renderForm();
+if (!code && me.name && (me.phone || me.email)) doLook();
 </script>
 </body>
 </html>
