@@ -8,7 +8,7 @@
 <link rel="icon" href="pipi-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
-<link rel="stylesheet" href="booking.css?v=20261116h">
+<link rel="stylesheet" href="booking.css?v=20261116i">
 <style>
 /* 抽签页：沿用预约页的粉色 Y2K 外观，动物和弹窗是像素风 */
 .dwrap{max-width:520px;margin:0 auto;padding-top:14px}
@@ -75,6 +75,10 @@
 @keyframes bob{50%{transform:translateY(-2px)}}
 /* 图鉴分区 + 头像 */
 .bk{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:2px dashed var(--line)}.bk:last-of-type{border-bottom:0}.bk b{font:600 17px var(--f-num)}.bk small{display:block;color:var(--muted)}.bk .bkl{max-width:50%;text-align:right}.bkc.sure{background:var(--orange2);color:#fff}
+.barlink{color:inherit;text-decoration:none}.barlink:hover{text-decoration:underline}
+.gohome{text-align:center;margin:14px 0 0}.gohome .go{display:inline-block;text-decoration:none;font-size:17px;padding:10px 22px}
+.sect .treeic{display:inline-block;vertical-align:-3px;margin-right:6px;image-rendering:pixelated}
+.fairy,.spark{position:absolute;left:0;top:0;pointer-events:none;z-index:3}.fairy svg,.spark svg{display:block;image-rendering:pixelated}.fairy svg{opacity:.97}
 .sect{margin:12px 0 6px;font:400 17px var(--f-head);color:var(--win-ink)}.sect.wsect{color:#3E78C4}
 .album.winter{grid-template-columns:repeat(6,1fr)}.album.winter .slot{background:#F2F7FF;box-shadow:0 0 0 2px #A9C9EE}
 .avrow{display:flex;align-items:center;gap:12px;margin-bottom:4px}.avrow b{display:block;font:400 20px var(--f-head);color:var(--ink)}.avrow small{color:var(--muted)}
@@ -123,8 +127,8 @@
   <div class="ground" id="ground"><span id="g-tree" class="tree-c"></span><span id="g-snow" class="orb"></span><span id="g-bear" class="orb hop"></span><span id="g-ginger" class="orb hop h2"></span></div>
   <div class="wpop" id="wpop" hidden role="status"><div class="wbar"><b>snow.exe</b><button type="button" id="wclose" aria-label="close">×</button></div><div class="wbody"><p class="wsay" id="wsay"></p></div></div></div>
 
-<script src="shared.js?v=20261116h"></script>
-<script src="collect/animals.js?v=20261116h"></script>
+<script src="shared.js?v=20261116i"></script>
+<script src="collect/animals.js?v=20261116i"></script>
 <script>
 const API = (window.PIPI && window.PIPI.CONFIG && window.PIPI.CONFIG.gasUrl) || 'https://script.google.com/macros/s/AKfycbwxnPR1LAy40_WUZL7YsAVqzBc0jaJccSumND8BS-NqEWsoitp0PAgMZLOQSQpcO21BZg/exec';
 const code = new URLSearchParams(location.search).get('c') || '';
@@ -133,23 +137,25 @@ const AV = Object.fromEntries(PIPI_AVATARS.concat(PIPI_DEFAULT_AVATARS).map(a =>
 const WINTER_TO = '2027-02-28';
 const T = {
   zh: {navBook: '预约拼豆', navAlbum: '我的主页 ✿', h1: '抽签', fT: code ? '来抽一只小可爱 (｡･ω･｡)ﾉ' : '我的主页', fTi: code ? 'Tirage' : 'Mon espace',
-    note: code ? '每个手机号或邮箱每天能抽 1 次，抽到的不会重复。集满任意 10 样，免费拼豆一次！' : '填预约时用的昵称和手机号（或邮箱），就能看到你的预约、图鉴和头像。',
+    note: code ? '每个手机号或邮箱每天能抽 1 次，小动物不会重复；也可能直接抽中惊喜礼物或折扣！集满任意 10 样，免费拼豆一次' : '填预约时用的昵称和手机号（或邮箱），就能看到你的预约、图鉴和头像。',
     name: '昵称', phone: '手机号', email: '邮箱', or: '手机号和邮箱填一个就行（以后用同一个来认你）',
     go: '抽一只！', look: '进入我的主页',
     bkT: '我的预约', bkTi: 'Réservations', bkNone: '现在没有待来的预约 (｡･ω･｡) 去「预约拼豆」约一个吧', bkCancel: '取消预约', bkSure: '确定取消？再点一次', bkDone: '已经取消啦，座位已经空出来了', bkLate: '已经开始了，不能在网上取消，请联系店主', bkPpl: n => n + ' 人', bkErr: '取消没成功，请再试一次或联系店主', sending: '抽签中…',
-    got: n => `你捉到了「${n}」！`, nth: n => `这是你的第 ${n} 只`, extra: x => ({'免费奶茶': '还中了：免费奶茶一杯 ✿ 跟店主说一声', '下次半价': '还中了：下次拼豆半价 ✿（60 天内）', '下次免单': '还中了：下次拼豆免单 ✿（60 天内）'}[x] || x),
-    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`, reg: '常规 · 10 只小动物', win: '❄ 冬日限定 · 到 2/28', avT: '我的头像', avLock: '集齐冬日限定 6 样，解锁下面 4 款冬日头像', avPick: '点一下换头像', avNone: '还没有头像，从下面挑一个吧', avDef: '猫猫狗狗', avWin: '❄ 冬日头像', avSaved: '头像换好啦 ✿',
+    got: n => `你捉到了「${n}」！`, prizeH: '哇！抽中了惊喜 (≧▽≦)',
+    prize: x => ({'免费奶茶': '免费奶茶一杯，第二日即可兑换', '下次半价': '下次拼豆半价 ✿（60 天内有效）', '下次免单': '下次拼豆免单 ✿（60 天内有效）'}[x] || x), nth: n => `这是你的第 ${n} 只`, extra: x => ({'免费奶茶': '还中了：免费奶茶一杯 ✿ 跟店主说一声', '下次半价': '还中了：下次拼豆半价 ✿（60 天内）', '下次免单': '还中了：下次拼豆免单 ✿（60 天内）'}[x] || x),
+    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`, reg: '森林居民', goHome: '进入我的主页 ✿ 看预约、换头像', win: '❄ 冬日限定', avT: '我的头像', avLock: '集齐冬日限定 6 样，解锁下面 4 款冬日头像', avPick: '点一下换头像', avNone: '还没有头像，从下面挑一个吧', avDef: '猫猫狗狗', avWin: '❄ 冬日头像', avSaved: '头像换好啦 ✿',
     wsay: '搓搓小手<br>迎接冬天的好运啦', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: '二维码过期啦，请重新扫一下柜台的码', TODAY: '今天已经抽过啦，明天再来～', ALL: '所有小可爱都捉齐啦，等冬日限定吧 ❄', CONTACT: '请填手机号或邮箱', NAME: '请填昵称（和第一次抽的时候一样）', NET: '网络有点问题，再试一次？'},
     freeT: '免费拼豆一次！', freeP: '已经捉到 10 只小可爱啦 (≧▽≦)<br>不限时 · 下次到店在「我的图鉴」里给店主看', ok: '收下啦 ♡',
     fsay: '喵呜汪~ 吱吱嘎嘎！<br>哼哼啪呜，呱呱噜 ♪', fsub: '欢迎你回到森林'},
   fr: {navBook: 'Réserver', navAlbum: 'Mon espace ✿', h1: 'Tirage', fT: code ? 'Attrape un petit ami (｡･ω･｡)ﾉ' : 'Mon espace', fTi: code ? '抽签' : '我的主页',
-    note: code ? 'Un tirage par jour et par téléphone ou e-mail, jamais deux fois le même. Avec 10 trouvailles, une session de perles offerte !' : 'Entrez le pseudo et le téléphone (ou e-mail) de votre réservation pour voir vos réservations, votre album et votre avatar.',
+    note: code ? 'Un tirage par jour et par téléphone ou e-mail : un petit ami (jamais deux fois le même) ou parfois un cadeau surprise ou une réduction ! Avec 10 trouvailles, une session offerte.' : 'Entrez le pseudo et le téléphone (ou e-mail) de votre réservation pour voir vos réservations, votre album et votre avatar.',
     name: 'Pseudo', phone: 'Téléphone', email: 'E-mail', or: 'Téléphone ou e-mail (le même à chaque fois)',
     go: 'Tirer !', look: 'Ouvrir mon espace',
     bkT: 'Mes réservations', bkTi: '我的预约', bkNone: 'Aucune réservation à venir (｡･ω･｡) Réservez dans « Réserver »', bkCancel: 'Annuler', bkSure: 'Sûr ? Touchez encore', bkDone: 'Réservation annulée, la place est libérée', bkLate: 'Déjà commencée : contactez la gérante pour annuler', bkPpl: n => n + ' pers.', bkErr: 'Annulation impossible, réessayez ou contactez la gérante', sending: 'Tirage…',
-    got: n => `Vous avez attrapé : ${n} !`, nth: n => `C’est votre n° ${n}`, extra: x => ({'免费奶茶': 'Bonus : un thé au lait offert ✿ dites-le à la gérante', '下次半价': 'Bonus : -50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Bonus : prochaine session offerte ✿ (60 jours)'}[x] || x),
-    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`, reg: 'Classiques · 10 animaux', win: '❄ Édition hiver · jusqu’au 28/2', avT: 'Mon avatar', avLock: 'Complétez l’édition hiver (6) pour débloquer ces 4 avatars', avPick: 'Touchez pour changer', avNone: 'Pas encore d’avatar, choisissez-en un', avDef: 'Chats & chiens', avWin: '❄ Avatars d’hiver', avSaved: 'Avatar changé ✿',
+    got: n => `Vous avez attrapé : ${n} !`, prizeH: 'Waouh, une surprise ! (≧▽≦)',
+    prize: x => ({'免费奶茶': 'Un thé au lait offert, à récupérer dès le lendemain', '下次半价': '-50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Prochaine session offerte ✿ (60 jours)'}[x] || x), nth: n => `C’est votre n° ${n}`, extra: x => ({'免费奶茶': 'Bonus : un thé au lait offert ✿ dites-le à la gérante', '下次半价': 'Bonus : -50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Bonus : prochaine session offerte ✿ (60 jours)'}[x] || x),
+    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`, reg: 'Habitants de la forêt', goHome: 'Ouvrir mon espace ✿ réservations, avatar', win: '❄ Édition hiver', avT: 'Mon avatar', avLock: 'Complétez l’édition hiver (6) pour débloquer ces 4 avatars', avPick: 'Touchez pour changer', avNone: 'Pas encore d’avatar, choisissez-en un', avDef: 'Chats & chiens', avWin: '❄ Avatars d’hiver', avSaved: 'Avatar changé ✿',
     wsay: 'On se frotte les mains,<br>la chance de l’hiver arrive !', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: 'QR code expiré, scannez à nouveau celui du comptoir', TODAY: 'Déjà tiré aujourd’hui, revenez demain～', ALL: 'Vous les avez tous ! Attendez l’édition hiver ❄', CONTACT: 'Indiquez un téléphone ou un e-mail', NAME: 'Indiquez votre pseudo (le même que la première fois)', NET: 'Problème de réseau, réessayez ?'},
     freeT: 'Session offerte !', freeP: '10 petits amis attrapés (≧▽≦)<br>Sans limite de temps · montrez votre album à la gérante', ok: 'Merci ♡',
@@ -191,25 +197,28 @@ function readForm() {
 }
 const payload = () => ({name: me.name, phone: me.phone.replace(/\D/g, '').length >= 6 ? me.code + ' ' + me.phone : '', email: me.email});
 
+const TREE_ICON = PX(['..OO..', '.OgGO.', 'OgggGO', '.OggO.', 'OgGggO', 'OOttOO', '..tt..'], {O: '#2F5A2A', g: '#6BAA4A', G: '#A9D46A', t: '#7A4E2D'}, 'treeic', 3);
 let myAvatar = '';
-const slots = (list, album) => list.map(a => album.includes(a.key)
-  ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${shadow(a)}</div>`).join('');
+/* 没抽到的格子：不露轮廓，只放一个淡淡的像素问号（森林居民粉色、冬日浅蓝） */
+const QMARK = ['.OOO.', 'O...O', '....O', '...O.', '..O..', '.....', '..O..'];
+const slots = (list, album, col) => list.map(a => album.includes(a.key)
+  ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${PX(QMARK, {O: col}, '', 4)}</div>`).join('');
 function renderAlbum(album, avatar) {
   if (avatar !== undefined) myAvatar = avatar || '';
   const n = album.length, winterOK = PIPI_WINTER.every(a => album.includes(a.key));
   const showWinter = album.some(k => PIPI_WINTER.some(a => a.key === k)) || new Date().toISOString().slice(0, 10) <= WINTER_TO;
   const cur = AV[myAvatar];
   $('albWin').hidden = false;
-  $('albWin').innerHTML = bar(t().albT, t().albTi) + `<div class="win-body">
+  $('albWin').innerHTML = bar(code ? `<a class="barlink" href="draw.html">${t().albT} →</a>` : t().albT, t().albTi) + `<div class="win-body">
     <div class="avrow"><div class="avcur">${cur ? PX(cur.rows, cur.pal, '', 3) : PX(PIPI_ANIMALS[0].rows, Object.fromEntries(Object.keys(PIPI_ANIMALS[0].pal).map(k => [k, '#EBD3DF'])), '', 3)}</div>
       <div><b>${esc(me.name)}</b><small>${cur ? t().avPick : t().avNone}</small></div></div>
     ${n ? `<p class="avlab">${t().avDef}</p><div class="avpick">${PIPI_DEFAULT_AVATARS.map(a => `<button type="button" class="avopt" data-av="${a.key}" aria-pressed="${a.key === myAvatar}" aria-label="${esc(a.zh)}">${PX(a.rows, a.pal, '', 2)}</button>`).join('')}</div>
     <p class="avlab win2">${t().avWin}${winterOK ? '' : ' · ' + t().avLock}</p><div class="avpick">${PIPI_AVATARS.map(a => winterOK
       ? `<button type="button" class="avopt" data-av="${a.key}" aria-pressed="${a.key === myAvatar}">${PX(a.rows, a.pal, '', 2)}</button>`
       : `<span class="avopt locked">${PX(a.rows, Object.fromEntries(Object.keys(a.pal).map(k => [k, k === 'b' || k === 'f' ? '#EEF3F9' : '#C9D3DE'])), '', 2)}</span>`).join('')}</div>` : ''}
-    <h4 class="sect">${t().reg}</h4><div class="album">${slots(PIPI_ANIMALS, album)}</div>
-    ${showWinter ? `<h4 class="sect wsect">${t().win}</h4><div class="album winter">${slots(PIPI_WINTER, album)}</div>` : ''}
-    <p class="count">${t().count(n)}</p></div>`;
+    <h4 class="sect">${TREE_ICON}${t().reg}</h4><div class="album">${slots(PIPI_ANIMALS, album, '#F2C9DA')}</div>
+    ${showWinter ? `<h4 class="sect wsect">${t().win}</h4><div class="album winter">${slots(PIPI_WINTER, album, '#C9DCF2')}</div>` : ''}
+    <p class="count">${t().count(n)}</p>${code ? `<p class="gohome"><a class="go" href="draw.html">${t().goHome}</a></p>` : ''}</div>`;
 }
 async function pickAvatar(av) {
   const prev = myAvatar; myAvatar = av; renderAlbum(albumNow);
@@ -224,11 +233,14 @@ function renderGot(r) {
   $('resWin').hidden = false;
   const bush = PX(['....OOOO....', '..OOggGgOO..', '.OgGggggGgO.', 'OggggGggggGO', 'OgGggggggggO', 'OggggggGgggO', '.OgGgggggGO.', '..OOOOOOOO..'], {O: '#2F5A2A', g: '#6BAA4A', G: '#A9D46A'}, 'bush', 7);
   $('resWin').innerHTML = bar('✿', 'Surprise') + `<div class="win-body stage">${bush}
-    <div class="got" id="got">${a ? PX(a.rows, a.pal, '', 6) : ''}<h3>${t().got(esc(nameOf(r.item)))}</h3><p>${t().nth(r.nth)}</p>${r.extra ? `<span class="extra">${t().extra(r.extra)}</span>` : ''}</div></div>`;
+    <div class="got" id="got">${a ? `${PX(a.rows, a.pal, '', 6)}<h3>${t().got(esc(nameOf(r.item)))}</h3><p>${t().nth(r.nth)}</p>`
+      : `${PX(['..y...y..', '...y.y...', '....y....', 'OOOOyOOOO', 'OccyyyccO', 'OyyyyyyyO', 'OccyyyccO', '.OccyccO.', '.OccyccO.', '.OccyccO.', '.OOOOOOO.'], {O: '#3B2C2A', c: '#E5413A', y: '#F2C14E'}, '', 8)}
+         <h3>${t().prizeH}</h3><span class="extra">${t().prize(r.extra)}</span>`}</div></div>`;
   $('resWin').scrollIntoView({behavior: 'smooth', block: 'start'});
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   setTimeout(() => { const b = $('resWin').querySelector('.bush'); if (b) b.remove(); $('got').style.display = 'block';
     (albumNow = r.album, renderAlbum(r.album, r.avatar));
+    if (r.extra === '下次免单') setTimeout(fairyMagic, 300);
     if (r.regularDone) setTimeout(parade, 1200);
     if (r.winterDone) setTimeout(xmasNight, 1200);
     if (r.free) setTimeout(showFree, (r.regularDone || r.winterDone) ? 1600 : 900);
@@ -281,6 +293,39 @@ async function doLook() {
     const r = await fetch(API + '?' + q).then(x => x.json());
     if (r.ok) (albumNow = r.album, renderAlbum(r.album, r.avatar)); else { msg = t().e[r.error] || t().e.NET; renderForm(); }
   } catch (e) { msg = t().e.NET; renderForm(); }
+}
+
+/* ---------- 抽中「下次免单」：像素小精灵绕着礼物飞两圈，一路撒星星，最后在礼物上方施个魔法（星星炸开）然后消失 ---------- */
+const FAIRY = ['.....OOO.....', '....OyyyO....', '.ww.OfffO.ww.', 'wwwwOKfKOwwww', '.wwwOfpfOwww.', '..wwOOOOOww..', '....OpppO....', '...OpPpPpO...', '..OpppppppO..', '...OOOOOOO...', '....O...O....'];
+const FAIRY_PAL = {O: '#3B2C2A', y: '#FFD84D', f: '#F6CFB0', K: '#2B211C', p: '#F4A9CB', P: '#E9809F', w: '#CFE6FF'};   // 金头发、粉裙子、浅蓝翅膀（小柱试过蓝绿后决定用回这套）
+const STAR5 = ['..Y..', '.YWY.', 'YWWWY', '.YWY.', '..Y..'];   // 星星沿用金黄色，在蓝绿小精灵旁边更显眼
+function fairyMagic() {
+  const g = $('got'); if (!g || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  g.style.position = 'relative';
+  const gift = g.querySelector('svg'), gr = gift.getBoundingClientRect(), br = g.getBoundingClientRect();
+  const cx = gr.left - br.left + gr.width / 2, cy = gr.top - br.top + gr.height / 2, R = Math.min(120, br.width / 2 - 30);
+  const star = (x, y, size) => { const d = document.createElement('div'); d.className = 'spark'; d.innerHTML = PX(STAR5, {Y: '#FFD84D', W: '#FFFFFF'}, '', size);
+    d.style.left = (x - size * 2.5) + 'px'; d.style.top = (y - size * 2.5) + 'px'; g.appendChild(d); return d; };
+  const f = document.createElement('div'); f.className = 'fairy'; f.innerHTML = PX(FAIRY, FAIRY_PAL, '', 4); g.appendChild(f);
+  const fw = 52, fh = 44, pos = a => ({x: cx + Math.cos(a) * R - fw / 2, y: cy + Math.sin(a) * R * 0.55 - fh / 2});
+  /* 飞两圈，速度忽快忽慢（角度里叠一个正弦），身子也上下轻轻飘 */
+  const frames = []; for (let i = 0; i <= 64; i++) { const u = i / 64, a = -Math.PI / 2 + Math.PI * 4 * (u + 0.07 * Math.sin(Math.PI * 4 * u)), p = pos(a);
+    frames.push({transform: `translate(${p.x}px,${p.y + Math.sin(u * Math.PI * 10) * 5}px)`}); }
+  const top = {x: cx - fw / 2, y: cy - gr.height / 2 - fh - 6};
+  frames.push({transform: `translate(${top.x}px,${top.y}px)`});
+  f.animate(frames, {duration: 4200, easing: 'ease-in-out', fill: 'forwards'});
+  /* 一路撒星星 */
+  const trail = setInterval(() => { const fr = f.getBoundingClientRect(); const s = star(fr.left - br.left + fw / 2, fr.top - br.top + fh, 2);
+    s.animate([{opacity: 1, transform: 'translateY(0)'}, {opacity: 0, transform: 'translateY(14px)'}], {duration: 700, easing: 'steps(4)', fill: 'forwards'}); setTimeout(() => s.remove(), 750); }, 110);
+  /* 施魔法：礼物闪一下，八颗星星炸开，小精灵消失 */
+  setTimeout(() => {
+    clearInterval(trail);
+    gift.animate([{filter: 'brightness(1)'}, {filter: 'brightness(1.8) drop-shadow(0 0 8px #FFD84D)'}, {filter: 'brightness(1)'}], {duration: 700, easing: 'steps(4)'});
+    for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2, s = star(cx, cy, 3);
+      s.animate([{transform: 'translate(0,0)', opacity: 1}, {transform: `translate(${Math.cos(a) * 80}px,${Math.sin(a) * 60}px)`, opacity: 0}], {duration: 900, easing: 'steps(6)', fill: 'forwards'}); setTimeout(() => s.remove(), 950); }
+    f.animate([{opacity: 1}, {opacity: 1, offset: .4}, {opacity: 0}], {duration: 900, easing: 'steps(5)', fill: 'forwards'});
+    setTimeout(() => f.remove(), 950);
+  }, 4300);
 }
 
 /* 弹窗：任意 10 样 → 免费；常规 10 只集齐 → 游行 + 森林弹窗 */
