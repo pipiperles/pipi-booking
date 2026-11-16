@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no">
+<title>PiPi 抽签</title>
+<link rel="icon" href="pipi-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
+<link rel="stylesheet" href="booking.css">
+<style>
+/* 抽签页：沿用预约页的粉色 Y2K 外观，动物和弹窗是像素风 */
+.dwrap{max-width:520px;margin:0 auto;padding-top:14px}
+.dhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.dhead img{width:110px;height:auto}
+.dhead h1{margin:0;font:400 30px var(--f-head);color:var(--orange2);text-shadow:3px 3px 0 #FFD0E3}
+.lang2 button{border:2px solid var(--orange2);background:#fff;color:var(--orange2);font:600 14px var(--f-num);padding:4px 10px;cursor:pointer}
+.lang2 button[aria-pressed="true"]{background:var(--orange2);color:#fff}
+.dnote{margin:0 0 12px;color:var(--muted);font-size:15px}
+.or{margin:2px 0 8px;font-size:14px;color:var(--muted)}
+.dbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.dbtns .go{flex:1}
+.msg{margin:10px 0 0;color:var(--orange2);font-weight:600}
+/* 抽到的那一刻 */
+.stage{text-align:center;padding:6px 0 4px}
+.bush{display:block;margin:6px auto 0;image-rendering:pixelated;animation:shake .5s steps(2) 3}
+.got{display:none}
+.got svg{display:block;margin:0 auto;image-rendering:pixelated;animation:popout .5s steps(5) both}
+.got h3{margin:12px 0 2px;font:400 26px var(--f-head);color:var(--orange2);text-shadow:3px 3px 0 #FFD0E3}
+.got p{margin:2px 0;color:var(--ink)}
+.extra{display:inline-block;margin-top:8px;padding:4px 12px;background:#FFF2B3;color:#8A5A00;font-weight:600;
+  box-shadow:0 -3px 0 #F2A900,0 3px 0 #F2A900,-3px 0 0 #F2A900,3px 0 0 #F2A900}
+@keyframes shake{0%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+@keyframes popout{0%{transform:translateY(30px) scale(.4);opacity:0}70%{transform:translateY(-6px) scale(1.08);opacity:1}100%{transform:none;opacity:1}}
+/* 图鉴 */
+.album{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:6px}
+.slot{aspect-ratio:1;background:#fff;display:grid;place-items:center;padding:4px;box-shadow:0 0 0 2px var(--line)}
+.slot svg{max-width:100%;max-height:100%;image-rendering:pixelated}
+.slot.no svg{opacity:.9}
+.count{margin:10px 0 0;text-align:center;color:var(--muted)}
+.count b{color:var(--orange2);font:600 20px var(--f-num)}
+/* 弹窗（与集卡预览同款） */
+.pop{position:fixed;inset:0;display:grid;place-items:center;padding:16px;background:rgba(90,40,64,.28);z-index:20}
+.pop[hidden]{display:none}
+.pwin{width:min(340px,100%);background:#FFF5FA;animation:pop-in .4s steps(4) both;box-shadow:0 -3px 0 #C2457E,0 3px 0 #C2457E,-3px 0 0 #C2457E,3px 0 0 #C2457E,9px 9px 0 #F4A9CB}
+.pbar{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;background:repeating-linear-gradient(90deg,#F9C6DE 0 6px,#FBD3E6 6px 12px);border-bottom:3px solid #C2457E}
+.pbar b{flex:1;font:600 15px var(--f-num);color:#C2457E}
+.pbtns{display:flex;gap:4px}.pbtns i{width:18px;height:18px;background:#fff;box-shadow:0 0 0 2px #C2457E;display:grid;place-items:center;font:700 11px/1 var(--f-num);font-style:normal;color:#C2457E}
+.pbody{position:relative;padding:20px 18px 18px;text-align:center}
+.pheart{animation:hop .6s steps(2) .4s infinite;image-rendering:pixelated}
+.pbody h3{margin:10px 0 4px;font:400 30px/1.2 var(--f-head);color:var(--orange2);text-shadow:3px 3px 0 #FFD0E3}
+.pbody p{margin:0 0 16px;color:var(--muted);font-size:15px;line-height:1.6}
+.pgo{border:0;padding:10px 26px;cursor:pointer;font:400 19px var(--f-head);color:#fff;background:linear-gradient(180deg,#FFA060,#F4511E 75%);
+  box-shadow:0 -3px 0 #B8360C,0 3px 0 #B8360C,-3px 0 0 #B8360C,3px 0 0 #B8360C,0 6px 0 #B8360C,inset 0 3px 0 rgba(255,255,255,.45)}
+.fpop{position:fixed;left:50%;top:18%;width:min(300px,92vw);transform:translateX(-50%);background:#F3F8E4;z-index:21;
+  box-shadow:0 -3px 0 #2F5A2A,0 3px 0 #2F5A2A,-3px 0 0 #2F5A2A,3px 0 0 #2F5A2A,6px 6px 0 #8B5A2B,9px 9px 0 #A9D46A}
+.fpop[hidden]{display:none}
+.fbar{display:flex;align-items:center;gap:8px;padding:5px 8px 5px 10px;background:repeating-linear-gradient(90deg,#6BAA4A 0 6px,#7DBB55 6px 12px);border-bottom:3px solid #2F5A2A}
+.fbar b{flex:1;font:600 14px var(--f-num);color:#F3F8E4;text-shadow:2px 2px 0 #2F5A2A}
+.fbar button{width:18px;height:18px;padding:0;border:0;background:#F3F8E4;box-shadow:0 0 0 2px #2F5A2A;font:700 11px/1 var(--f-num);color:#2F5A2A;cursor:pointer}
+.fbody{position:relative;padding:14px 14px 0;text-align:center;overflow:hidden}
+.fbody .tree{position:absolute;bottom:9px;image-rendering:pixelated}.fbody .tree.l{left:6px}.fbody .tree.r{right:6px}.fbody .shroom{position:absolute;bottom:9px;left:44px;image-rendering:pixelated}
+.fsay{margin:4px 22px 8px;font:400 20px/1.45 var(--f-head);color:#2F5A2A}.fsay.fr{font:600 16px/1.5 var(--f-num)}
+.fsay small{display:block;margin-top:4px;font:400 15px var(--f-head);color:#6B8F4E}
+.grass{height:12px;margin:0 -14px;background:linear-gradient(90deg,transparent 0 3px,#6BAA4A 3px 6px,transparent 6px 12px,#3E7A3A 12px 15px,transparent 15px 18px) 0 0/18px 3px repeat-x,linear-gradient(#6BAA4A,#6BAA4A) 0 3px/100% 9px no-repeat}
+.road{position:fixed;left:0;right:0;bottom:24px;height:100px;overflow:hidden;pointer-events:none;z-index:19}
+.road[hidden]{display:none}
+.parade{position:absolute;bottom:0;left:0;display:flex;align-items:flex-end;gap:10px}
+.parade .w{position:relative;animation:bob .36s steps(1) infinite}.parade .w:nth-child(odd){animation-delay:-.18s}
+.parade .w svg{display:block;image-rendering:pixelated}.parade .w svg+svg{position:absolute;left:0;bottom:0;opacity:0}
+.parade .w.f2 svg{opacity:0}.parade .w.f2 svg+svg{opacity:1}
+@keyframes pop-in{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:none;opacity:1}}
+@keyframes hop{50%{transform:translateY(-4px)}}
+@keyframes bob{50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.bush,.got svg,.pwin,.pheart,.parade .w{animation:none}}
+</style>
+</head>
+<body>
+<div class="dwrap">
+  <div class="dhead"><img src="pipi-logo.png" alt="PiPi Studio" width="660" height="240"><h1 id="t-h1">抽签</h1>
+    <div class="lang2"><button data-lang="zh">中</button><button data-lang="fr">FR</button></div></div>
+  <section class="win" id="formWin"></section>
+  <section class="win" id="resWin" hidden style="margin-top:16px"></section>
+  <section class="win" id="albWin" hidden style="margin-top:16px"></section>
+</div>
+
+<div class="pop" id="pop" hidden role="dialog" aria-modal="true"><div class="pwin">
+  <div class="pbar"><b>PiPi.exe</b><span class="pbtns" aria-hidden="true"><i>_</i><i>□</i><i>×</i></span></div>
+  <div class="pbody"><span id="pheart"></span><h3 id="popT"></h3><p id="popP"></p><button class="pgo" id="popOk"></button></div></div></div>
+<div class="fpop" id="fpop" hidden role="status"><div class="fbar"><b>forest.exe</b><button type="button" id="fclose" aria-label="close">×</button></div>
+  <div class="fbody"><span id="ftrees"></span><p class="fsay" id="fsay"></p><div class="grass"></div></div></div>
+<div class="road" id="road" hidden><div class="parade" id="pa"></div></div>
+
+<script src="shared.js"></script>
+<script src="collect/animals.js"></script>
+<script>
+const API = (window.PIPI && window.PIPI.CONFIG && window.PIPI.CONFIG.gasUrl) || 'https://script.google.com/macros/s/AKfycbwxnPR1LAy40_WUZL7YsAVqzBc0jaJccSumND8BS-NqEWsoitp0PAgMZLOQSQpcO21BZg/exec';
+const code = new URLSearchParams(location.search).get('c') || '';
+const A = Object.fromEntries(PIPI_ANIMALS.map(a => [a.key, a]));
+const T = {
+  zh: {h1: '抽签', fT: code ? '来抽一只小可爱 (｡･ω･｡)ﾉ' : '我的图鉴', fTi: code ? 'Tirage' : 'Album',
+    note: code ? '每个手机号或邮箱每天能抽 1 次，抽到的不会重复。集满任意 10 样，免费拼豆一次！' : '在店里扫柜台的二维码就能抽签。这里可以看你已经捉到的小可爱。',
+    name: '昵称', phone: '手机号', email: '邮箱', or: '手机号和邮箱填一个就行（以后用同一个来认你）',
+    go: '抽一只！', look: '看我的图鉴', sending: '抽签中…',
+    got: n => `你捉到了「${n}」！`, nth: n => `这是你的第 ${n} 只`, extra: x => ({'免费奶茶': '还中了：免费奶茶一杯 ✿ 跟店主说一声', '下次半价': '还中了：下次拼豆半价 ✿（60 天内）', '下次免单': '还中了：下次拼豆免单 ✿（60 天内）'}[x] || x),
+    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`,
+    e: {CODE: '二维码过期啦，请重新扫一下柜台的码', TODAY: '今天已经抽过啦，明天再来～', ALL: '所有小可爱都捉齐啦，等冬日限定吧 ❄', CONTACT: '请填手机号或邮箱', NAME: '请填昵称（和第一次抽的时候一样）', NET: '网络有点问题，再试一次？'},
+    freeT: '免费拼豆一次！', freeP: '已经捉到 10 只小可爱啦 (≧▽≦)<br>不限时 · 下次到店在「我的图鉴」里给店主看', ok: '收下啦 ♡',
+    fsay: '喵呜汪~ 吱吱嘎嘎！<br>哼哼啪呜，呱呱噜 ♪', fsub: '欢迎你回到森林'},
+  fr: {h1: 'Tirage', fT: code ? 'Attrape un petit ami (｡･ω･｡)ﾉ' : 'Mon album', fTi: code ? '抽签' : '图鉴',
+    note: code ? 'Un tirage par jour et par téléphone ou e-mail, jamais deux fois le même. Avec 10 trouvailles, une session de perles offerte !' : 'Scannez le QR code au comptoir pour tirer. Ici, vous voyez vos trouvailles.',
+    name: 'Pseudo', phone: 'Téléphone', email: 'E-mail', or: 'Téléphone ou e-mail (le même à chaque fois)',
+    go: 'Tirer !', look: 'Voir mon album', sending: 'Tirage…',
+    got: n => `Vous avez attrapé : ${n} !`, nth: n => `C’est votre n° ${n}`, extra: x => ({'免费奶茶': 'Bonus : un thé au lait offert ✿ dites-le à la gérante', '下次半价': 'Bonus : -50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Bonus : prochaine session offerte ✿ (60 jours)'}[x] || x),
+    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`,
+    e: {CODE: 'QR code expiré, scannez à nouveau celui du comptoir', TODAY: 'Déjà tiré aujourd’hui, revenez demain～', ALL: 'Vous les avez tous ! Attendez l’édition hiver ❄', CONTACT: 'Indiquez un téléphone ou un e-mail', NAME: 'Indiquez votre pseudo (le même que la première fois)', NET: 'Problème de réseau, réessayez ?'},
+    freeT: 'Session offerte !', freeP: '10 petits amis attrapés (≧▽≦)<br>Sans limite de temps · montrez votre album à la gérante', ok: 'Merci ♡',
+    fsay: 'Mrrp woofu~ squee quaak!<br>Oinku pawoo, ribbi huff ♪', fsub: 'Bon retour dans la forêt !'}
+};
+let lang = 'zh'; try { const l = localStorage.getItem('pipi-lang'); if (l === 'fr' || l === 'zh') lang = l; else if (/^fr/i.test(navigator.language)) lang = 'fr'; } catch (e) {}
+const t = () => T[lang];
+let me = {name: '', code: '+33', phone: '', email: ''}; try { Object.assign(me, JSON.parse(localStorage.getItem('pipi-me') || '{}')); } catch (e) {}
+let busy = false, msg = '', last = null;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const $ = id => document.getElementById(id);
+const PX = (rows, pal, cls, u) => `<svg class="${cls || ''}" width="${rows[0].length * u}" viewBox="0 0 ${rows[0].length} ${rows.length}" shape-rendering="crispEdges" aria-hidden="true">${rows.map((r, y) => [...r].map((c, x) => pal[c] ? `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${pal[c]}"/>` : '').join('')).join('')}</svg>`;
+const shadow = a => PX(a.rows, Object.fromEntries(Object.keys(a.pal).map(k => [k, '#EBD3DF'])), '', 3);
+const nameOf = k => A[k] ? (lang === 'fr' ? A[k].fr : A[k].zh) : k;
+const bar = (tt, ti) => `<div class="win-bar"><h2>${tt}<i>${ti}</i></h2><div class="win-btns" aria-hidden="true"><span>–</span><span>□</span><span>×</span></div></div>`;
+
+function renderForm() {
+  document.documentElement.lang = lang === 'fr' ? 'fr' : 'zh-CN';
+  $('t-h1').textContent = t().h1;
+  document.querySelectorAll('.lang2 button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  const codes = ['+33', '+86', '+852', '+886', '+44', '+49', '+39', '+34', '+32', '+41', '+1'];
+  $('formWin').innerHTML = bar(t().fT, t().fTi) + `<div class="win-body"><p class="dnote">${t().note}</p>
+    <label class="field"><span>${t().name} <em>*</em></span><input id="m-name" type="text" maxlength="40" value="${esc(me.name)}" autocomplete="nickname"></label>
+    <p class="or">${t().or}</p>
+    <div class="field"><span>${t().phone}</span><div class="phone"><select id="m-code" aria-label="code">${codes.map(c => `<option ${c === me.code ? 'selected' : ''}>${c}</option>`).join('')}</select>
+      <input id="m-phone" type="tel" inputmode="tel" maxlength="20" placeholder="6 12 34 56 78" value="${esc(me.phone)}"></div></div>
+    <label class="field"><span>${t().email}</span><input id="m-email" type="email" maxlength="120" value="${esc(me.email)}" autocomplete="email"></label>
+    <div class="dbtns">${code ? `<button class="go" id="drawBtn" ${busy ? 'disabled' : ''}>${busy ? t().sending : t().go}</button>` : ''}<button class="btn2" id="lookBtn">${t().look}</button></div>
+    ${msg ? `<p class="msg">${msg}</p>` : ''}</div>`;
+}
+function readForm() {
+  me = {name: $('m-name').value.trim(), code: $('m-code').value, phone: $('m-phone').value.trim(), email: $('m-email').value.trim()};
+  try { localStorage.setItem('pipi-me', JSON.stringify(me)); } catch (e) {}
+  if (!me.name) return t().e.NAME;
+  if (me.phone.replace(/\D/g, '').length < 6 && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(me.email)) return t().e.CONTACT;
+  return '';
+}
+const payload = () => ({name: me.name, phone: me.phone.replace(/\D/g, '').length >= 6 ? me.code + ' ' + me.phone : '', email: me.email});
+
+function renderAlbum(album) {
+  const n = album.length;
+  $('albWin').hidden = false;
+  $('albWin').innerHTML = bar(t().albT, t().albTi) + `<div class="win-body"><div class="album">${PIPI_ANIMALS.map(a => album.includes(a.key)
+    ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${shadow(a)}</div>`).join('')}</div>
+    <p class="count">${t().count(n)}</p></div>`;
+}
+function renderGot(r) {
+  const a = A[r.item];
+  $('resWin').hidden = false;
+  const bush = PX(['....OOOO....', '..OOggGgOO..', '.OgGggggGgO.', 'OggggGggggGO', 'OgGggggggggO', 'OggggggGgggO', '.OgGgggggGO.', '..OOOOOOOO..'], {O: '#2F5A2A', g: '#6BAA4A', G: '#A9D46A'}, 'bush', 7);
+  $('resWin').innerHTML = bar('✿', 'Surprise') + `<div class="win-body stage">${bush}
+    <div class="got" id="got">${a ? PX(a.rows, a.pal, '', 6) : ''}<h3>${t().got(esc(nameOf(r.item)))}</h3><p>${t().nth(r.nth)}</p>${r.extra ? `<span class="extra">${t().extra(r.extra)}</span>` : ''}</div></div>`;
+  $('resWin').scrollIntoView({behavior: 'smooth', block: 'start'});
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => { const b = $('resWin').querySelector('.bush'); if (b) b.remove(); $('got').style.display = 'block';
+    renderAlbum(r.album);
+    if (r.regularDone && r.album.length === PIPI_ANIMALS.length) setTimeout(parade, 1200);
+    if (r.free) setTimeout(showFree, r.regularDone ? 1400 : 900);
+  }, still ? 0 : 1500);
+}
+
+async function doDraw() {
+  const err = readForm(); if (err) { msg = err; renderForm(); return; }
+  busy = true; msg = ''; renderForm();
+  try {
+    const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action: 'draw', c: code, ...payload()})}).then(x => x.json());
+    busy = false;
+    if (r.ok) { msg = ''; renderForm(); renderGot(r); return; }
+    msg = t().e[r.error] || t().e.NET; renderForm();
+    if (r.album) renderAlbum(r.album);
+  } catch (e) { busy = false; msg = t().e.NET; renderForm(); }
+}
+async function doLook() {
+  const err = readForm(); if (err) { msg = err; renderForm(); return; }
+  msg = ''; renderForm();
+  try {
+    const q = new URLSearchParams({action: 'me', ...payload()});
+    const r = await fetch(API + '?' + q).then(x => x.json());
+    if (r.ok) renderAlbum(r.album); else { msg = t().e[r.error] || t().e.NET; renderForm(); }
+  } catch (e) { msg = t().e.NET; renderForm(); }
+}
+
+/* 弹窗：任意 10 样 → 免费；常规 10 只集齐 → 游行 + 森林弹窗 */
+function showFree() {
+  $('pheart').innerHTML = PX(['.OO.OO.', 'OhHOHHO', 'OHHHHHO', '.OHHHO.', '..OHO..', '...O...'], {O: '#3B2C2A', H: '#F4511E', h: '#FFD0A0'}, 'pheart', 9);
+  $('popT').textContent = t().freeT; $('popP').innerHTML = t().freeP; $('popOk').textContent = t().ok;
+  $('pop').hidden = false; $('popOk').focus();
+}
+function parade() {
+  const TREE = ['...OO...', '..OggO..', '.OgGggO.', '..OggO..', '.OgggGO.', 'OgGgggGO', '.OOttOO.', '...tt...'], TP = {O: '#2F5A2A', g: '#6BAA4A', G: '#A9D46A', t: '#7A4E2D'};
+  $('ftrees').innerHTML = PX(TREE, TP, 'tree l', 3) + PX(TREE, TP, 'tree r', 3) + PX(['.OOOO.', 'OrwrrO', 'OrrrwO', '.OccO.', '..cc..'], {O: '#3B2C2A', r: '#E5513A', w: '#FFF4E2', c: '#F3E6CC'}, 'shroom', 3);
+  $('fsay').className = 'fsay' + (lang === 'fr' ? ' fr' : ''); $('fsay').innerHTML = t().fsay + '<small>' + t().fsub + '</small>';
+  const pa = $('pa'), road = $('road');
+  pa.innerHTML = PIPI_ANIMALS.map((a, i) => `<div class="w${i % 2 ? ' f2' : ''}">${PX(a.walk[0], a.pal, '', 3)}${PX(a.walk[1], a.pal, '', 3)}</div>`).join('');
+  road.hidden = false;
+  const tick = setInterval(() => pa.querySelectorAll('.w').forEach(w => w.classList.toggle('f2')), 180);
+  const from = road.clientWidth, to = -pa.scrollWidth;
+  const an = pa.animate([{transform: `translateX(${from}px)`}, {transform: `translateX(${to}px)`}], {duration: (from - to) / 70 * 1000, easing: 'linear', fill: 'forwards'});
+  setTimeout(() => { $('fpop').hidden = false; }, 1500);
+  an.finished.then(() => { clearInterval(tick); road.hidden = true; });
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.lang) { lang = b.dataset.lang; try { localStorage.setItem('pipi-lang', lang); } catch (x) {} renderForm(); return; }
+  if (b.id === 'drawBtn' && !busy) doDraw();
+  if (b.id === 'lookBtn') doLook();
+  if (b.id === 'popOk') $('pop').hidden = true;
+  if (b.id === 'fclose') $('fpop').hidden = true;
+});
+renderForm();
+</script>
+</body>
+</html>
