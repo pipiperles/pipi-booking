@@ -225,3 +225,10 @@ button.meow-cat:active .pixcat-svg{transform:translateY(1px)}
 .pnav a[aria-current="page"]{background:var(--win-edge);color:#fff}
 .pnav a:hover:not([aria-current]){background:#FFF0F6}
 .pnav a[aria-current="page"]{color:#fff!important}
+
+/* logo 下面的 Instagram 账号 */
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.ins{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:#fff;color:var(--win-ink);text-decoration:none;font:600 14px var(--f-num);
+  box-shadow:0 -2px 0 var(--win-edge),0 2px 0 var(--win-edge),-2px 0 0 var(--win-edge),2px 0 0 var(--win-edge)}
+.ins:hover{background:#FFF0F6}
+.ins svg{display:block}
