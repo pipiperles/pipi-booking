@@ -213,3 +213,7 @@ button.meow-cat:active .pixcat-svg{transform:translateY(1px)}
 .pixcat-svg.eating .shut{opacity:0!important;animation:none}
 .pix-fish{position:absolute;left:13px;top:22px;width:30px;height:15px;pointer-events:none;image-rendering:pixelated}
 .pix-heart{position:absolute;left:39px;top:-4px;width:21px;height:18px;pointer-events:none;image-rendering:pixelated}
+
+/* 手机号 / 邮箱二选一的说明 */
+.contact-hint{margin:2px 0 8px;font-size:14px;color:var(--muted)}
+.contact-hint.bad{color:var(--orange2);font-weight:600}
