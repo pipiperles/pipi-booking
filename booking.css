@@ -232,3 +232,10 @@ button.meow-cat:active .pixcat-svg{transform:translateY(1px)}
   box-shadow:0 -2px 0 var(--win-edge),0 2px 0 var(--win-edge),-2px 0 0 var(--win-edge),2px 0 0 var(--win-edge)}
 .ins:hover{background:#FFF0F6}
 .ins svg{display:block}
+
+/* 页面最下面的联系方式 */
+.sitefoot{position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 18px;margin:28px 0 8px;padding:14px 16px;
+  background:#fff;color:var(--muted);font-size:14px;text-align:center;box-shadow:0 -3px 0 var(--win-edge),0 3px 0 var(--win-edge),-3px 0 0 var(--win-edge),3px 0 0 var(--win-edge)}
+.sitefoot b{font:400 16px var(--f-head);color:var(--win-ink)}
+.sitefoot a{color:var(--orange2);font-weight:600;text-decoration:none}
+.sitefoot a:hover{text-decoration:underline}
