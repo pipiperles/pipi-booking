@@ -8,7 +8,7 @@
 <link rel="icon" href="pipi-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
-<link rel="stylesheet" href="booking.css?v=20261116c">
+<link rel="stylesheet" href="booking.css?v=20261116d">
 <style>
 /* 抽签页：沿用预约页的粉色 Y2K 外观，动物和弹窗是像素风 */
 .dwrap{max-width:520px;margin:0 auto;padding-top:14px}
@@ -73,7 +73,31 @@
 @keyframes pop-in{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:none;opacity:1}}
 @keyframes hop{50%{transform:translateY(-4px)}}
 @keyframes bob{50%{transform:translateY(-2px)}}
-@media (prefers-reduced-motion:reduce){.bush,.got svg,.pwin,.pheart,.parade .w{animation:none}}
+/* 图鉴分区 + 头像 */
+.sect{margin:12px 0 6px;font:400 17px var(--f-head);color:var(--win-ink)}.sect.wsect{color:#3E78C4}
+.album.winter{grid-template-columns:repeat(6,1fr)}.album.winter .slot{background:#F2F7FF;box-shadow:0 0 0 2px #A9C9EE}
+.avrow{display:flex;align-items:center;gap:12px;margin-bottom:4px}.avrow b{display:block;font:400 20px var(--f-head);color:var(--ink)}.avrow small{color:var(--muted)}
+.avcur{width:66px;height:66px;flex:none;display:grid;place-items:center;background:#fff;box-shadow:0 0 0 3px var(--win-edge)}.avcur svg{max-width:60px;max-height:60px;image-rendering:pixelated}
+.avpick{display:flex;gap:8px;margin:8px 0 2px}.avopt{padding:3px;border:0;background:#fff;cursor:pointer;box-shadow:0 0 0 2px var(--line)}.avopt[aria-pressed="true"]{box-shadow:0 0 0 3px var(--orange2)}.avopt svg{display:block;image-rendering:pixelated}
+/* 圣诞夜舞台 */
+.wstage{position:fixed;left:50%;top:50%;width:min(760px,100vw);height:430px;transform:translate(-50%,-50%);z-index:22;overflow:hidden;background:linear-gradient(#2E3F6E,#5A6FA8 70%,#8FA6D6);box-shadow:0 0 0 3px #2A3550,0 0 0 100vmax rgba(42,53,80,.35)}
+.wstage[hidden]{display:none}
+.sky i{position:absolute;top:-6px;width:4px;height:4px;background:#fff;animation:snow linear infinite}.sky i:nth-child(3n){width:3px;height:3px;opacity:.8}
+@keyframes snow{to{transform:translate(-20px,440px)}}
+.sleigh{position:absolute;top:0;left:0;z-index:2;display:flex;align-items:flex-end;gap:2px}.sleigh svg{display:block;image-rendering:pixelated}.sleigh .rope{width:16px;height:3px;background:#F2C14E;margin-bottom:26px}
+.sleigh .deer{position:relative;animation:bob .36s steps(1) infinite}.sleigh .deer svg+svg{position:absolute;left:0;bottom:0;opacity:0}.sleigh .deer.f2 svg{opacity:0}.sleigh .deer.f2 svg+svg{opacity:1}
+.gifts{position:absolute;inset:0;z-index:1;pointer-events:none}.gifts svg{position:absolute;image-rendering:pixelated}
+.ground{position:absolute;left:0;right:0;bottom:0;height:86px;background:#F7FBFF;box-shadow:0 -3px 0 #DDE9F7}
+.ground>span{position:absolute;bottom:20px;display:block}.ground svg{display:block;image-rendering:pixelated}.tree-c{left:50%;margin-left:-40px;z-index:2}
+.tree-c svg+svg{position:absolute;left:0;bottom:0;opacity:0}.tree-c.f2 svg{opacity:0}.tree-c.f2 svg+svg{opacity:1}
+.hop svg{animation:hop .7s steps(2) infinite}.hop.h2 svg{animation-delay:-.35s}
+.wpop{position:absolute;left:0;right:0;margin:0 auto;top:150px;width:min(290px,90%);background:#F2F7FF;z-index:3;box-shadow:0 -3px 0 #2A3550,0 3px 0 #2A3550,-3px 0 0 #2A3550,3px 0 0 #2A3550,6px 6px 0 #A9C9EE,9px 9px 0 #FFFFFF}
+.wpop[hidden]{display:none}
+.wbar{display:flex;align-items:center;gap:8px;padding:5px 8px 5px 10px;background:repeating-linear-gradient(90deg,#A9C9EE 0 6px,#C3DBF5 6px 12px);border-bottom:3px solid #2A3550}
+.wbar b{flex:1;font:600 14px var(--f-num);color:#2A3550}.wbar button{width:18px;height:18px;padding:0;border:0;background:#fff;box-shadow:0 0 0 2px #2A3550;font:700 11px/1 var(--f-num);color:#2A3550;cursor:pointer}
+.wbody{padding:12px 14px 14px;text-align:center}.wsay{margin:0;font:400 20px/1.45 var(--f-head);color:#2A3550}.wsay.fr{font:600 16px/1.5 var(--f-num)}
+.wsay small{display:block;margin-top:6px;font:400 22px/1 -apple-system,"Apple Color Emoji",sans-serif;letter-spacing:1px}
+@media (prefers-reduced-motion:reduce){.bush,.got svg,.pwin,.pheart,.parade .w,.sky i,.hop svg{animation:none}}
 </style>
 </head>
 <body>
@@ -92,20 +116,26 @@
 <div class="fpop" id="fpop" hidden role="status"><div class="fbar"><b>forest.exe</b><button type="button" id="fclose" aria-label="close">×</button></div>
   <div class="fbody"><span id="ftrees"></span><p class="fsay" id="fsay"></p><div class="grass"></div></div></div>
 <div class="road" id="road" hidden><div class="parade" id="pa"></div></div>
+<div class="wstage" id="ws" hidden><div class="sky" id="sky"></div><div class="sleigh" id="sleigh"></div><div class="gifts" id="gifts"></div>
+  <div class="ground" id="ground"><span id="g-tree" class="tree-c"></span><span id="g-snow" class="orb"></span><span id="g-bear" class="orb hop"></span><span id="g-ginger" class="orb hop h2"></span></div>
+  <div class="wpop" id="wpop" hidden role="status"><div class="wbar"><b>snow.exe</b><button type="button" id="wclose" aria-label="close">×</button></div><div class="wbody"><p class="wsay" id="wsay"></p></div></div></div>
 
-<script src="shared.js?v=20261116c"></script>
-<script src="collect/animals.js?v=20261116c"></script>
+<script src="shared.js?v=20261116d"></script>
+<script src="collect/animals.js?v=20261116d"></script>
 <script>
 const API = (window.PIPI && window.PIPI.CONFIG && window.PIPI.CONFIG.gasUrl) || 'https://script.google.com/macros/s/AKfycbwxnPR1LAy40_WUZL7YsAVqzBc0jaJccSumND8BS-NqEWsoitp0PAgMZLOQSQpcO21BZg/exec';
 const code = new URLSearchParams(location.search).get('c') || '';
-const A = Object.fromEntries(PIPI_ANIMALS.map(a => [a.key, a]));
+const A = Object.fromEntries(PIPI_ANIMALS.concat(PIPI_WINTER).map(a => [a.key, a]));
+const AV = Object.fromEntries(PIPI_AVATARS.map(a => [a.key, a]));
+const WINTER_TO = '2027-02-28';
 const T = {
   zh: {navBook: '预约拼豆', navAlbum: '我的图鉴 ✿', h1: '抽签', fT: code ? '来抽一只小可爱 (｡･ω･｡)ﾉ' : '我的图鉴', fTi: code ? 'Tirage' : 'Album',
     note: code ? '每个手机号或邮箱每天能抽 1 次，抽到的不会重复。集满任意 10 样，免费拼豆一次！' : '在店里扫柜台的二维码就能抽签。这里可以看你已经捉到的小可爱。',
     name: '昵称', phone: '手机号', email: '邮箱', or: '手机号和邮箱填一个就行（以后用同一个来认你）',
     go: '抽一只！', look: '看我的图鉴', sending: '抽签中…',
     got: n => `你捉到了「${n}」！`, nth: n => `这是你的第 ${n} 只`, extra: x => ({'免费奶茶': '还中了：免费奶茶一杯 ✿ 跟店主说一声', '下次半价': '还中了：下次拼豆半价 ✿（60 天内）', '下次免单': '还中了：下次拼豆免单 ✿（60 天内）'}[x] || x),
-    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`,
+    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`, reg: '常规 · 10 只小动物', win: '❄ 冬日限定 · 到 2/28', avT: '我的头像', avLock: '集齐冬日限定 6 样，解锁 4 款冬日头像', avPick: '点一下换头像', avSaved: '头像换好啦 ✿',
+    wsay: '搓搓小手<br>迎接冬天的好运啦', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: '二维码过期啦，请重新扫一下柜台的码', TODAY: '今天已经抽过啦，明天再来～', ALL: '所有小可爱都捉齐啦，等冬日限定吧 ❄', CONTACT: '请填手机号或邮箱', NAME: '请填昵称（和第一次抽的时候一样）', NET: '网络有点问题，再试一次？'},
     freeT: '免费拼豆一次！', freeP: '已经捉到 10 只小可爱啦 (≧▽≦)<br>不限时 · 下次到店在「我的图鉴」里给店主看', ok: '收下啦 ♡',
     fsay: '喵呜汪~ 吱吱嘎嘎！<br>哼哼啪呜，呱呱噜 ♪', fsub: '欢迎你回到森林'},
@@ -114,7 +144,8 @@ const T = {
     name: 'Pseudo', phone: 'Téléphone', email: 'E-mail', or: 'Téléphone ou e-mail (le même à chaque fois)',
     go: 'Tirer !', look: 'Voir mon album', sending: 'Tirage…',
     got: n => `Vous avez attrapé : ${n} !`, nth: n => `C’est votre n° ${n}`, extra: x => ({'免费奶茶': 'Bonus : un thé au lait offert ✿ dites-le à la gérante', '下次半价': 'Bonus : -50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Bonus : prochaine session offerte ✿ (60 jours)'}[x] || x),
-    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`,
+    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`, reg: 'Classiques · 10 animaux', win: '❄ Édition hiver · jusqu’au 28/2', avT: 'Mon avatar', avLock: 'Complétez l’édition hiver (6) pour débloquer 4 avatars', avPick: 'Touchez pour changer', avSaved: 'Avatar changé ✿',
+    wsay: 'On se frotte les mains,<br>la chance de l’hiver arrive !', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: 'QR code expiré, scannez à nouveau celui du comptoir', TODAY: 'Déjà tiré aujourd’hui, revenez demain～', ALL: 'Vous les avez tous ! Attendez l’édition hiver ❄', CONTACT: 'Indiquez un téléphone ou un e-mail', NAME: 'Indiquez votre pseudo (le même que la première fois)', NET: 'Problème de réseau, réessayez ?'},
     freeT: 'Session offerte !', freeP: '10 petits amis attrapés (≧▽≦)<br>Sans limite de temps · montrez votre album à la gérante', ok: 'Merci ♡',
     fsay: 'Mrrp woofu~ squee quaak!<br>Oinku pawoo, ribbi huff ♪', fsub: 'Bon retour dans la forêt !'}
@@ -155,13 +186,31 @@ function readForm() {
 }
 const payload = () => ({name: me.name, phone: me.phone.replace(/\D/g, '').length >= 6 ? me.code + ' ' + me.phone : '', email: me.email});
 
-function renderAlbum(album) {
-  const n = album.length;
+let myAvatar = '';
+const slots = (list, album) => list.map(a => album.includes(a.key)
+  ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${shadow(a)}</div>`).join('');
+function renderAlbum(album, avatar) {
+  if (avatar !== undefined) myAvatar = avatar || '';
+  const n = album.length, winterOK = PIPI_WINTER.every(a => album.includes(a.key));
+  const showWinter = album.some(k => PIPI_WINTER.some(a => a.key === k)) || new Date().toISOString().slice(0, 10) <= WINTER_TO;
+  const cur = AV[myAvatar];
   $('albWin').hidden = false;
-  $('albWin').innerHTML = bar(t().albT, t().albTi) + `<div class="win-body"><div class="album">${PIPI_ANIMALS.map(a => album.includes(a.key)
-    ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${shadow(a)}</div>`).join('')}</div>
+  $('albWin').innerHTML = bar(t().albT, t().albTi) + `<div class="win-body">
+    <div class="avrow"><div class="avcur">${cur ? PX(cur.rows, cur.pal, '', 3) : PX(PIPI_ANIMALS[0].rows, Object.fromEntries(Object.keys(PIPI_ANIMALS[0].pal).map(k => [k, '#EBD3DF'])), '', 3)}</div>
+      <div><b>${esc(me.name)}</b><small>${winterOK ? t().avPick : t().avLock}</small></div></div>
+    ${winterOK ? `<div class="avpick">${PIPI_AVATARS.map(a => `<button type="button" class="avopt" data-av="${a.key}" aria-pressed="${a.key === myAvatar}">${PX(a.rows, a.pal, '', 2)}</button>`).join('')}</div>` : ''}
+    <h4 class="sect">${t().reg}</h4><div class="album">${slots(PIPI_ANIMALS, album)}</div>
+    ${showWinter ? `<h4 class="sect wsect">${t().win}</h4><div class="album winter">${slots(PIPI_WINTER, album)}</div>` : ''}
     <p class="count">${t().count(n)}</p></div>`;
 }
+async function pickAvatar(av) {
+  const prev = myAvatar; myAvatar = av; renderAlbum(albumNow);
+  try {
+    const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action: 'avatar', avatar: av, ...payload()})}).then(x => x.json());
+    if (!r.ok) { myAvatar = prev; renderAlbum(albumNow); }
+  } catch (e) { myAvatar = prev; renderAlbum(albumNow); }
+}
+let albumNow = [];
 function renderGot(r) {
   const a = A[r.item];
   $('resWin').hidden = false;
@@ -171,9 +220,10 @@ function renderGot(r) {
   $('resWin').scrollIntoView({behavior: 'smooth', block: 'start'});
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   setTimeout(() => { const b = $('resWin').querySelector('.bush'); if (b) b.remove(); $('got').style.display = 'block';
-    renderAlbum(r.album);
-    if (r.regularDone && r.album.length === PIPI_ANIMALS.length) setTimeout(parade, 1200);
-    if (r.free) setTimeout(showFree, r.regularDone ? 1400 : 900);
+    (albumNow = r.album, renderAlbum(r.album, r.avatar));
+    if (r.regularDone) setTimeout(parade, 1200);
+    if (r.winterDone) setTimeout(xmasNight, 1200);
+    if (r.free) setTimeout(showFree, (r.regularDone || r.winterDone) ? 1600 : 900);
   }, still ? 0 : 1500);
 }
 
@@ -185,7 +235,7 @@ async function doDraw() {
     busy = false;
     if (r.ok) { msg = ''; renderForm(); renderGot(r); return; }
     msg = t().e[r.error] || t().e.NET; renderForm();
-    if (r.album) renderAlbum(r.album);
+    if (r.album) (albumNow = r.album, renderAlbum(r.album, r.avatar));
   } catch (e) { busy = false; msg = t().e.NET; renderForm(); }
 }
 async function doLook() {
@@ -194,7 +244,7 @@ async function doLook() {
   try {
     const q = new URLSearchParams({action: 'me', ...payload()});
     const r = await fetch(API + '?' + q).then(x => x.json());
-    if (r.ok) renderAlbum(r.album); else { msg = t().e[r.error] || t().e.NET; renderForm(); }
+    if (r.ok) (albumNow = r.album, renderAlbum(r.album, r.avatar)); else { msg = t().e[r.error] || t().e.NET; renderForm(); }
   } catch (e) { msg = t().e.NET; renderForm(); }
 }
 
@@ -218,6 +268,39 @@ function parade() {
   an.finished.then(() => { clearInterval(tick); road.hidden = true; });
 }
 
+/* 集齐冬日 6 样：圣诞夜（下雪、雪橇从右上角斜飞出画并丢礼物、大家绕圣诞树转圈）+ snow.exe 弹窗 */
+function xmasNight() {
+  const W = Object.fromEntries(PIPI_WINTER.map(a => [a.key, a])), st = $('ws');
+  $('wsay').className = 'wsay' + (lang === 'fr' ? ' fr' : ''); $('wsay').innerHTML = t().wsay + '<small>' + t().wsub + '</small>';
+  $('sky').innerHTML = Array.from({length: 46}, () => `<i style="left:${Math.random() * 104}%;animation-duration:${3 + Math.random() * 4}s;animation-delay:${-Math.random() * 7}s"></i>`).join('');
+  const SLEIGH = ['OO..................', 'OrO.................', 'OrrO................', 'OrrrOOOOOOOOOOOOOOOO', 'OrrrrrrrrrrrrrrrrrrO', 'ORrrrrgggggggggrrrRO', '.ORRRRRRRRRRRRRRRRO.', '..OyO..........OyO..', 'yyyyyyyyyyyyyyyyyyyy'];
+  const deer = d => `<span class="deer${d ? ' f2' : ''}">${PX(W.reindeer.walk[0], W.reindeer.pal, '', 3)}${PX(W.reindeer.walk[1], W.reindeer.pal, '', 3)}</span>`;
+  $('sleigh').innerHTML = deer(0) + deer(1) + '<span class="rope"></span><span style="position:relative">' + PX(W.santa.rows, W.santa.pal, '', 3).replace('<svg ', '<svg style="position:absolute;left:12px;bottom:12px" ') + PX(SLEIGH, {O: '#3B2C2A', r: '#D9362F', R: '#A82525', g: '#F2C14E', y: '#F2C14E'}, '', 3) + '</span>';
+  $('g-tree').innerHTML = PX(W.xmastree.rows, W.xmastree.pal, '', 5) + PX(W.xmastree.rows, {...W.xmastree.pal, r: '#FFD84D', y: '#E5413A', G: '#FFFFFF'}, '', 5);
+  $('g-snow').innerHTML = PX(W.snowman.rows, W.snowman.pal, '', 4);
+  $('g-bear').innerHTML = PX(W.polarbear.rows, W.polarbear.pal, '', 3);
+  $('g-ginger').innerHTML = PX(W.ginger.rows, W.ginger.pal, '', 3);
+  $('gifts').innerHTML = ''; st.hidden = false; $('wpop').hidden = true;
+  const sl = $('sleigh'), gifts = $('gifts');
+  const blink = setInterval(() => document.querySelectorAll('#ws .deer, #g-tree').forEach(e => e.classList.toggle('f2')), 400);
+  sl.animate([{transform: `translate(${st.clientWidth}px,-50px)`}, {transform: `translate(${-sl.scrollWidth - 20}px,90px)`}], {duration: 7000, easing: 'linear', fill: 'forwards'});
+  const GIFT = ['..y.y..', '...y...', 'OOOyOOO', 'OccyccO', 'OyyyyyO', 'OccyccO', 'OOOOOOO'], GC = ['#E5413A', '#3E8EDE', '#43A85A', '#EF84AE', '#8A5CC9'];
+  const drop = setInterval(() => {
+    const sr = st.getBoundingClientRect(), r = sl.getBoundingClientRect(), x = r.left - sr.left + r.width * 0.75 + (Math.random() * 20 - 10), y = r.top - sr.top + r.height * 0.6;
+    if (x < -20 || x > sr.width) return;
+    const d = document.createElement('div'); d.innerHTML = PX(GIFT, {O: '#3B2C2A', c: GC[Math.floor(Math.random() * GC.length)], y: '#F2C14E'}, '', 3);
+    const g = d.firstElementChild; g.style.left = x + 'px'; g.style.top = y + 'px'; gifts.appendChild(g);
+    g.animate([{transform: 'translateY(0) rotate(-10deg)'}, {transform: `translateY(${sr.height - 86 + 8 + Math.random() * 30 - y}px) rotate(8deg)`}], {duration: 900 + Math.random() * 300, easing: 'steps(8)', fill: 'forwards'});
+  }, 380);
+  setTimeout(() => clearInterval(drop), 7000);
+  const ORB = [['g-snow', 0], ['g-bear', 2.1], ['g-ginger', 4.2]]; let run = true;
+  (function orbit(ts) { if (!run) return; const gw = $('ground').clientWidth, cx = gw / 2, rx = Math.min(150, gw * 0.36);
+    ORB.forEach(([id, ph]) => { const el = $(id), a = ts / 1000 * 1.05 + ph; el.style.left = (cx + Math.cos(a) * rx - el.offsetWidth / 2) + 'px'; el.style.bottom = (20 + Math.sin(a) * 16) + 'px'; el.style.zIndex = Math.sin(a) < 0 ? 3 : 1; });
+    requestAnimationFrame(orbit); })(0);
+  setTimeout(() => { $('wpop').hidden = false; }, 1500);
+  window.closeXmas = () => { run = false; clearInterval(blink); clearInterval(drop); st.hidden = true; };
+}
+
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.lang) { lang = b.dataset.lang; try { localStorage.setItem('pipi-lang', lang); } catch (x) {} renderForm(); return; }
@@ -225,6 +308,8 @@ document.addEventListener('click', e => {
   if (b.id === 'lookBtn') doLook();
   if (b.id === 'popOk') $('pop').hidden = true;
   if (b.id === 'fclose') $('fpop').hidden = true;
+  if (b.id === 'wclose' && window.closeXmas) window.closeXmas();
+  if (b.dataset.av) pickAvatar(b.dataset.av);
 });
 renderForm();
 if (!code && me.name && (me.phone || me.email)) doLook();
