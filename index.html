@@ -134,7 +134,7 @@ function renderPick(){
   const free=ready()?freeCount():0,max=Math.min(free,CONFIG.maxSeats);
   document.getElementById('pick').innerHTML=winBar(t('pickT'),t('pickTi'))+`<img class="palm" src="img/palm.png" alt="" aria-hidden="true"><img class="plant" src="img/plant.png" alt="" aria-hidden="true"><div class="win-body">
    <div class="q"><h3>${t('s1')}</h3><div class="days">${days.map((d,i)=>{const v=ymd(d);
-     return `<button class="day ${isWeekend(v)?'we':''} ${v===ds?'on':''}" data-date="${v}"><small>${i===0?t('today'):wdName(d)}</small><b>${d.getDate()}</b><small>${d.getMonth()+1}${lang==='zh'?'月':'/'}</small></button>`}).join('')}</div></div>
+     return `<button class="day ${isWeekend(v)?'we':''} ${v===ds?'on':''}" data-date="${v}"><small>${i===0?t('today'):wdName(d)}</small><b>${d.getDate()}</b><small>${lang==='zh'?(d.getMonth()+1)+'月':['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'][d.getMonth()]}</small></button>`}).join('')}</div></div>
    <div class="q ${ds?'':'off'}"><h3>${t('s2')}</h3><div class="grid">${times.map(m=>`<button class="opt ${m===st.start?'on':''}" data-start="${m}" ${!ds||past(m)?'disabled':''}>${hm(m)}</button>`).join('')}</div></div>
    <div class="q ${ds&&st.start!=null?'':'off'}"><h3>${t('s3')}</h3><div class="grid">${(ds?durOptions(ds):durOptions(todayStr())).map(o=>{const over=o.v!=='free'&&st.start!=null&&st.start+o.v>CONFIG.close;
      return `<button class="opt ${o.v===st.dur?'on':''}" data-dur="${o.v}" ${over||st.start==null?'disabled':''}>${o.v==='free'?t('free'):(o.v/60)+' '+t('h')}<small>${o.v==='free'?t('untilClose')+' · ':''}${o.p}</small></button>`}).join('')}</div>
