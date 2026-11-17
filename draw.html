@@ -8,7 +8,7 @@
 <link rel="icon" href="pipi-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
-<link rel="stylesheet" href="booking.css?v=20261116i">
+<link rel="stylesheet" href="booking.css?v=20261117a">
 <style>
 /* 抽签页：沿用预约页的粉色 Y2K 外观，动物和弹窗是像素风 */
 .dwrap{max-width:520px;margin:0 auto;padding-top:14px}
@@ -79,6 +79,13 @@
 .gohome{text-align:center;margin:14px 0 0}.gohome .go{display:inline-block;text-decoration:none;font-size:17px;padding:10px 22px}
 .sect .treeic{display:inline-block;vertical-align:-3px;margin-right:6px;image-rendering:pixelated}
 .fairy,.spark{position:absolute;left:0;top:0;pointer-events:none;z-index:3}.fairy svg,.spark svg{display:block;image-rendering:pixelated}.fairy svg{opacity:.97}
+.pz{margin-bottom:4px}.pzi{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;margin-bottom:8px;background:#FFF2B3;
+  box-shadow:0 -3px 0 #F2A900,0 3px 0 #F2A900,-3px 0 0 #F2A900,3px 0 0 #F2A900}
+.pzi b{font:600 16px var(--f-num);color:#8A5A00}.pzi small{display:block;color:#9A7A40;font-size:13px}
+.pzs{flex:none;font:600 14px var(--f-num);color:#fff;background:var(--orange2);padding:3px 10px}
+.pzi.used,.pzi.expired{background:#F4F1F2;box-shadow:0 -3px 0 #DDD3D8,0 3px 0 #DDD3D8,-3px 0 0 #DDD3D8,3px 0 0 #DDD3D8}
+.pzi.used b,.pzi.expired b{color:#A99AA2;text-decoration:line-through}.pzi.used small,.pzi.expired small{color:#B9AEB3}.pzi.used .pzs,.pzi.expired .pzs{background:#C9BEC4}
+.pznote{margin:2px 0 6px;font-size:13px;color:var(--muted)}
 .sect{margin:12px 0 6px;font:400 17px var(--f-head);color:var(--win-ink)}.sect.wsect{color:#3E78C4}
 .album.winter{grid-template-columns:repeat(6,1fr)}.album.winter .slot{background:#F2F7FF;box-shadow:0 0 0 2px #A9C9EE}
 .avrow{display:flex;align-items:center;gap:12px;margin-bottom:4px}.avrow b{display:block;font:400 20px var(--f-head);color:var(--ink)}.avrow small{color:var(--muted)}
@@ -127,8 +134,8 @@
   <div class="ground" id="ground"><span id="g-tree" class="tree-c"></span><span id="g-snow" class="orb"></span><span id="g-bear" class="orb hop"></span><span id="g-ginger" class="orb hop h2"></span></div>
   <div class="wpop" id="wpop" hidden role="status"><div class="wbar"><b>snow.exe</b><button type="button" id="wclose" aria-label="close">×</button></div><div class="wbody"><p class="wsay" id="wsay"></p></div></div></div>
 
-<script src="shared.js?v=20261116i"></script>
-<script src="collect/animals.js?v=20261116i"></script>
+<script src="shared.js?v=20261117a"></script>
+<script src="collect/animals.js?v=20261117a"></script>
 <script>
 const API = (window.PIPI && window.PIPI.CONFIG && window.PIPI.CONFIG.gasUrl) || 'https://script.google.com/macros/s/AKfycbwxnPR1LAy40_WUZL7YsAVqzBc0jaJccSumND8BS-NqEWsoitp0PAgMZLOQSQpcO21BZg/exec';
 const code = new URLSearchParams(location.search).get('c') || '';
@@ -143,7 +150,9 @@ const T = {
     bkT: '我的预约', bkTi: 'Réservations', bkNone: '现在没有待来的预约 (｡･ω･｡) 去「预约拼豆」约一个吧', bkCancel: '取消预约', bkSure: '确定取消？再点一次', bkDone: '已经取消啦，座位已经空出来了', bkLate: '已经开始了，不能在网上取消，请联系店主', bkPpl: n => n + ' 人', bkErr: '取消没成功，请再试一次或联系店主', sending: '抽签中…',
     got: n => `你捉到了「${n}」！`, prizeH: '哇！抽中了惊喜 (≧▽≦)',
     prize: x => ({'免费奶茶': '免费奶茶一杯，第二日即可兑换', '下次半价': '下次拼豆半价 ✿（60 天内有效）', '下次免单': '下次拼豆免单 ✿（60 天内有效）'}[x] || x), nth: n => `这是你的第 ${n} 只`, extra: x => ({'免费奶茶': '还中了：免费奶茶一杯 ✿ 跟店主说一声', '下次半价': '还中了：下次拼豆半价 ✿（60 天内）', '下次免单': '还中了：下次拼豆免单 ✿（60 天内）'}[x] || x),
-    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`, reg: '森林居民', goHome: '进入我的主页 ✿ 看预约、换头像', win: '❄ 冬日限定', avT: '我的头像', avLock: '集齐冬日限定 6 样，解锁下面 4 款冬日头像', avPick: '点一下换头像', avNone: '还没有头像，从下面挑一个吧', avDef: '猫猫狗狗', avWin: '❄ 冬日头像', avSaved: '头像换好啦 ✿',
+    albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`, reg: '森林居民', goHome: '进入我的主页 ✿ 看预约、换头像',
+    pzT: '🎁 我的奖品', pzNote: '到店出示此页或报昵称即可兑换（以店里记录为准，截图不算）', pzName: {'免费奶茶': '免费奶茶一杯', '下次半价': '下次拼豆半价', '下次免单': '下次拼豆免单', '免费拼豆一次': '免费拼豆一次'},
+    pzGot: d => `${d} 抽中`, pzUntil: d => `有效至 ${d}`, pzTea: '第二日起可兑换', pzSt: {pending: '待兑', used: '已兑', expired: '已过期'}, win: '❄ 冬日限定', avT: '我的头像', avLock: '集齐冬日限定 6 样，解锁下面 4 款冬日头像', avPick: '点一下换头像', avNone: '还没有头像，从下面挑一个吧', avDef: '猫猫狗狗', avWin: '❄ 冬日头像', avSaved: '头像换好啦 ✿',
     wsay: '搓搓小手<br>迎接冬天的好运啦', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: '二维码过期啦，请重新扫一下柜台的码', TODAY: '今天已经抽过啦，明天再来～', ALL: '所有小可爱都捉齐啦，等冬日限定吧 ❄', CONTACT: '请填手机号或邮箱', NAME: '请填昵称（和第一次抽的时候一样）', NET: '网络有点问题，再试一次？'},
     freeT: '免费拼豆一次！', freeP: '已经捉到 10 只小可爱啦 (≧▽≦)<br>不限时 · 下次到店在「我的图鉴」里给店主看', ok: '收下啦 ♡',
@@ -155,7 +164,9 @@ const T = {
     bkT: 'Mes réservations', bkTi: '我的预约', bkNone: 'Aucune réservation à venir (｡･ω･｡) Réservez dans « Réserver »', bkCancel: 'Annuler', bkSure: 'Sûr ? Touchez encore', bkDone: 'Réservation annulée, la place est libérée', bkLate: 'Déjà commencée : contactez la gérante pour annuler', bkPpl: n => n + ' pers.', bkErr: 'Annulation impossible, réessayez ou contactez la gérante', sending: 'Tirage…',
     got: n => `Vous avez attrapé : ${n} !`, prizeH: 'Waouh, une surprise ! (≧▽≦)',
     prize: x => ({'免费奶茶': 'Un thé au lait offert, à récupérer dès le lendemain', '下次半价': '-50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Prochaine session offerte ✿ (60 jours)'}[x] || x), nth: n => `C’est votre n° ${n}`, extra: x => ({'免费奶茶': 'Bonus : un thé au lait offert ✿ dites-le à la gérante', '下次半价': 'Bonus : -50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Bonus : prochaine session offerte ✿ (60 jours)'}[x] || x),
-    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`, reg: 'Habitants de la forêt', goHome: 'Ouvrir mon espace ✿ réservations, avatar', win: '❄ Édition hiver', avT: 'Mon avatar', avLock: 'Complétez l’édition hiver (6) pour débloquer ces 4 avatars', avPick: 'Touchez pour changer', avNone: 'Pas encore d’avatar, choisissez-en un', avDef: 'Chats & chiens', avWin: '❄ Avatars d’hiver', avSaved: 'Avatar changé ✿',
+    albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`, reg: 'Habitants de la forêt', goHome: 'Ouvrir mon espace ✿ réservations, avatar',
+    pzT: '🎁 Mes cadeaux', pzNote: 'Montrez cette page ou donnez votre pseudo en boutique (le registre de la boutique fait foi, pas de capture d’écran)', pzName: {'免费奶茶': 'Un thé au lait offert', '下次半价': '-50 % sur la prochaine session', '下次免单': 'Prochaine session offerte', '免费拼豆一次': 'Une session offerte'},
+    pzGot: d => `gagné le ${d}`, pzUntil: d => `valable jusqu’au ${d}`, pzTea: 'à récupérer dès le lendemain', pzSt: {pending: 'À utiliser', used: 'Utilisé', expired: 'Expiré'}, win: '❄ Édition hiver', avT: 'Mon avatar', avLock: 'Complétez l’édition hiver (6) pour débloquer ces 4 avatars', avPick: 'Touchez pour changer', avNone: 'Pas encore d’avatar, choisissez-en un', avDef: 'Chats & chiens', avWin: '❄ Avatars d’hiver', avSaved: 'Avatar changé ✿',
     wsay: 'On se frotte les mains,<br>la chance de l’hiver arrive !', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: 'QR code expiré, scannez à nouveau celui du comptoir', TODAY: 'Déjà tiré aujourd’hui, revenez demain～', ALL: 'Vous les avez tous ! Attendez l’édition hiver ❄', CONTACT: 'Indiquez un téléphone ou un e-mail', NAME: 'Indiquez votre pseudo (le même que la première fois)', NET: 'Problème de réseau, réessayez ?'},
     freeT: 'Session offerte !', freeP: '10 petits amis attrapés (≧▽≦)<br>Sans limite de temps · montrez votre album à la gérante', ok: 'Merci ♡',
@@ -203,8 +214,10 @@ let myAvatar = '';
 const QMARK = ['.OOO.', 'O...O', '....O', '...O.', '..O..', '.....', '..O..'];
 const slots = (list, album, col) => list.map(a => album.includes(a.key)
   ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${PX(QMARK, {O: col}, '', 4)}</div>`).join('');
-function renderAlbum(album, avatar) {
+let prizesNow = [];
+function renderAlbum(album, avatar, prizes) {
   if (avatar !== undefined) myAvatar = avatar || '';
+  if (prizes !== undefined) prizesNow = prizes || [];
   const n = album.length, winterOK = PIPI_WINTER.every(a => album.includes(a.key));
   const showWinter = album.some(k => PIPI_WINTER.some(a => a.key === k)) || new Date().toISOString().slice(0, 10) <= WINTER_TO;
   const cur = AV[myAvatar];
@@ -216,6 +229,9 @@ function renderAlbum(album, avatar) {
     <p class="avlab win2">${t().avWin}${winterOK ? '' : ' · ' + t().avLock}</p><div class="avpick">${PIPI_AVATARS.map(a => winterOK
       ? `<button type="button" class="avopt" data-av="${a.key}" aria-pressed="${a.key === myAvatar}">${PX(a.rows, a.pal, '', 2)}</button>`
       : `<span class="avopt locked">${PX(a.rows, Object.fromEntries(Object.keys(a.pal).map(k => [k, k === 'b' || k === 'f' ? '#EEF3F9' : '#C9D3DE'])), '', 2)}</span>`).join('')}</div>` : ''}
+    ${prizesNow.length ? `<h4 class="sect pzh">${t().pzT}</h4><div class="pz">${prizesNow.map(z => `<div class="pzi ${z.status}"><div><b>${esc(t().pzName[z.prize] || z.prize)}</b>
+      <small>${t().pzGot(esc(z.date))} · ${z.until ? t().pzUntil(esc(z.until)) : (z.prize === '免费奶茶' ? t().pzTea : '')}</small></div><span class="pzs">${t().pzSt[z.status]}</span></div>`).join('')}
+      <p class="pznote">${t().pzNote}</p></div>` : ''}
     <h4 class="sect">${TREE_ICON}${t().reg}</h4><div class="album">${slots(PIPI_ANIMALS, album, '#F2C9DA')}</div>
     ${showWinter ? `<h4 class="sect wsect">${t().win}</h4><div class="album winter">${slots(PIPI_WINTER, album, '#C9DCF2')}</div>` : ''}
     <p class="count">${t().count(n)}</p>${code ? `<p class="gohome"><a class="go" href="draw.html">${t().goHome}</a></p>` : ''}</div>`;
@@ -239,7 +255,7 @@ function renderGot(r) {
   $('resWin').scrollIntoView({behavior: 'smooth', block: 'start'});
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   setTimeout(() => { const b = $('resWin').querySelector('.bush'); if (b) b.remove(); $('got').style.display = 'block';
-    (albumNow = r.album, renderAlbum(r.album, r.avatar));
+    (albumNow = r.album, renderAlbum(r.album, r.avatar, r.prizes));
     if (r.extra === '下次免单') setTimeout(fairyMagic, 300);
     if (r.regularDone) setTimeout(parade, 1200);
     if (r.winterDone) setTimeout(xmasNight, 1200);
@@ -255,7 +271,7 @@ async function doDraw() {
     busy = false;
     if (r.ok) { msg = ''; renderForm(); renderGot(r); return; }
     msg = t().e[r.error] || t().e.NET; renderForm();
-    if (r.album) (albumNow = r.album, renderAlbum(r.album, r.avatar));
+    if (r.album) (albumNow = r.album, renderAlbum(r.album, r.avatar, r.prizes));
   } catch (e) { busy = false; msg = t().e.NET; renderForm(); }
 }
 /* ---------- 我的预约：列出今天及以后的预约，开始前可以自己取消（点两次确认） ---------- */
@@ -291,7 +307,7 @@ async function doLook() {
   try {
     const q = new URLSearchParams({action: 'me', ...payload()});
     const r = await fetch(API + '?' + q).then(x => x.json());
-    if (r.ok) (albumNow = r.album, renderAlbum(r.album, r.avatar)); else { msg = t().e[r.error] || t().e.NET; renderForm(); }
+    if (r.ok) (albumNow = r.album, renderAlbum(r.album, r.avatar, r.prizes)); else { msg = t().e[r.error] || t().e.NET; renderForm(); }
   } catch (e) { msg = t().e.NET; renderForm(); }
 }
 
