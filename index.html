@@ -7,7 +7,7 @@
 <meta name="format-detection" content="telephone=no, address=no, email=no, date=no">
 <meta name="description" content="PiPi 拼豆 · Paris 1er · 在线预约 / Réservation en ligne">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=ZCOOL+KuaiLe&display=swap">
-<link rel="stylesheet" href="booking.css?v=20261116h">
+<link rel="stylesheet" href="booking.css?v=20261124a">
 </head>
 <body>
 <div class="wrap">
@@ -28,6 +28,7 @@
   <nav class="pnav" style="display:flex;gap:6px"><a style="color:#C2457E;text-decoration:none" href="./" aria-current="page" id="nav-book"></a><a style="color:#C2457E;text-decoration:none" href="draw.html" id="nav-album"></a></nav>
   <div class="addr"><svg width="14" height="18" viewBox="0 0 14 18" aria-hidden="true"><path d="M7 1a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6z" fill="#F4511E"/><circle cx="7" cy="7" r="2.3" fill="#fff"/></svg><span id="addr"></span></div>
 
+  <section class="win price" id="price"></section>
   <main class="layout" id="main">
     <div>
       <section class="win" id="pick"></section>
@@ -45,7 +46,8 @@
    客人不选座位：系统按人数把座位自动分到店里的桌子上（优先整拨人坐同一张桌） */
 const {CONFIG,TABLES,seatIds,ALL_SEATS,ymd,hm,esc,overlap,api}=PIPI;
 const T={
- zh:{title:'PIPI 拼豆',navBook:'预约拼豆',navAlbum:'我的主页 ✿',sub:'Réservation de perles à repasser',
+ zh:{title:'PIPI 拼豆',prT:'价格明细',prTi:'Tarifs',prWd:'周一到周五',prWe:'周末和节假日',prPer:'每人',
+  prRows:{wd:[['按时','10 €','/ 小时'],['不限时','35 €','到 20:00']],we:[['按时','10 €','/ 小时'],['4 小时套餐','32 €','8 折'],['6 小时套餐','42 €','7 折']]},prNote:'价格每人，到店按实际时长结算。',navBook:'预约拼豆',navAlbum:'我的主页 ✿',sub:'Réservation de perles à repasser',
   pickT:'选时间 (｡･ω･｡)ﾉ',pickTi:'Choisir l’horaire',
   s1:'哪天来玩',s2:'几点来',s3:'待多久',s4:'几个人 (๑•̀ㅂ•́)و✧',
   wd:'日一二三四五六',wdp:'周',today:'今天',
@@ -65,7 +67,8 @@ const T={
   eName:'请填一个昵称',ePhone:'请填手机号（至少 6 位数字）',eEmail:'邮箱格式不对',eContact:'手机号和邮箱至少填一个',
   eConflict:'刚刚这个时段被别人约满了，请换个时间。',eNet:'没提交成功，请检查网络再试一次。',
   doneT:'约好了！ヽ(✿ﾟ▽ﾟ)ノ',doneP:'要取消可以在「我的主页」里自己取消；要改时间请提前联系店主 (^_-)-☆',shot:'建议截图保存这一页。',again:'再约一次',okT:'预约成功！',meow:'喵~',feed:'喂小猫一条鱼'},
- fr:{title:'PIPIPERLES STUDIO',navBook:'Réserver',navAlbum:'Mon espace ✿',sub:'Atelier de perles à repasser · PiPi',
+ fr:{title:'PIPIPERLES STUDIO',prT:'Tarifs',prTi:'',prWd:'Lundi – vendredi',prWe:'Week-end et jours fériés',prPer:'par personne',
+  prRows:{wd:[['À l’heure','10 €','/ heure'],['Illimité','35 €','jusqu’à 20h']],we:[['À l’heure','10 €','/ heure'],['Forfait 4 h','32 €','-20 %'],['Forfait 6 h','42 €','-30 %']]},prNote:'Prix par personne, réglés sur place selon la durée réelle.',navBook:'Réserver',navAlbum:'Mon espace ✿',sub:'Atelier de perles à repasser · PiPi',
   pickT:'Horaire',pickTi:'',
   s1:'Date',s2:'Heure d’arrivée',s3:'Durée',s4:'Combien de personnes ?',
   wd:['dim','lun','mar','mer','jeu','ven','sam'],wdp:'',today:'auj.',
@@ -128,6 +131,10 @@ function clampN(){if(st.n!=null&&ready()&&st.n>Math.min(freeCount(),CONFIG.maxSe
 
 /* ---------- 渲染 ---------- */
 const winBar=(title,sub)=>`<div class="win-bar"><h2>${title}${sub?` <i>${sub}</i>`:''}</h2><div class="win-btns" aria-hidden="true"><span>–</span><span>□</span><span>×</span></div></div>`;
+/* 价格明细：放在预约界面上面（2026-11-24 小柱定）。改价时记得和 durOptions、00-同步档「现行价格」一起改 */
+function renderPrice(){const el=document.getElementById('price'),r=T[lang].prRows;el.hidden=!!st.done;
+  const col=(h,rows,c)=>`<div class="pcol ${c}"><h3>${h}</h3><dl>${rows.map(([n,p,x])=>`<div><dt>${n}</dt><i aria-hidden="true"></i><dd><b>${p}</b><small>${x}</small></dd></div>`).join('')}</dl></div>`;
+  el.innerHTML=winBar(t('prT'),t('prTi'))+`<div class="win-body"><div class="pcols">${col(t('prWd'),r.wd,'wd')}${col(t('prWe'),r.we,'we')}</div><p class="note">${t('prNote')}</p></div>`}
 function renderPick(){
   const days=[];for(let i=0;i<CONFIG.daysAhead;i++){const d=new Date();d.setDate(d.getDate()+i);days.push(d)}
   const ds=st.date,times=[];for(let m=CONFIG.open;m<CONFIG.close;m+=CONFIG.step)times.push(m);
@@ -223,6 +230,7 @@ function renderAll(){document.documentElement.lang=lang==='zh'?'zh-CN':'fr';
   document.getElementById('t-title').textContent=t('title');document.getElementById('nav-book').textContent=t('navBook');document.getElementById('nav-album').textContent=t('navAlbum');document.getElementById('t-sub').textContent=t('sub');
   document.getElementById('addr').textContent=CONFIG.address;
   document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===lang));
+  renderPrice();
   if(st.done){renderDone();return}
   renderPick();renderSide();renderContact();renderBar()}
 const rerender=()=>{clampN();renderPick();renderSide();renderBar()};

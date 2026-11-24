@@ -239,3 +239,20 @@ button.meow-cat:active .pixcat-svg{transform:translateY(1px)}
 .sitefoot b{font:400 16px var(--f-head);color:var(--win-ink)}
 .sitefoot a{color:var(--orange2);font-weight:600;text-decoration:none}
 .sitefoot a:hover{text-decoration:underline}
+
+/* 首页最上面的价格明细：像菜单一样一行一价，中间用方形豆子点线连起来 */
+.price{position:relative;z-index:1}
+.price[hidden]{display:none}
+.pcols{display:grid;grid-template-columns:1fr 1fr;gap:20px 36px}
+@media (max-width:640px){.pcols{grid-template-columns:minmax(0,1fr)}}
+.pcol h3{margin:0 0 6px;font:400 18px var(--f-head);color:var(--win-ink)}
+.pcol.we h3{color:var(--orange2)}
+.pcol dl{margin:0}
+.pcol dl>div{display:flex;align-items:baseline;gap:10px;padding:4px 0}
+.pcol dt{flex:none;font:400 17px var(--f-head);color:var(--ink)}
+.pcol i{flex:1;min-width:16px;height:4px;background:repeating-linear-gradient(90deg,var(--line) 0 4px,transparent 4px 10px)}
+.pcol dd{margin:0;flex:none;min-width:118px;display:flex;align-items:baseline;gap:8px}
+.pcol dd b{font:600 22px var(--f-num);color:var(--orange2)}
+.pcol dd small{font-size:13px;color:var(--muted)}
+.price .note{margin:10px 0 0}
+html[lang="fr"] .pcol dt{font:500 17px var(--f-num)}
