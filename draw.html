@@ -83,6 +83,9 @@
   box-shadow:0 -3px 0 #F2A900,0 3px 0 #F2A900,-3px 0 0 #F2A900,3px 0 0 #F2A900}
 .pzi b{font:600 16px var(--f-num);color:#8A5A00}.pzi small{display:block;color:#9A7A40;font-size:13px}
 .pzs{flex:none;font:600 14px var(--f-num);color:#fff;background:var(--orange2);padding:3px 10px}
+.pzbtn{flex:none;min-height:44px;max-width:46%;border:0;cursor:pointer;font:600 16px var(--f-num);color:#fff;background:var(--orange2);padding:8px 16px;margin:3px;box-shadow:0 -3px 0 #8A5A00,0 3px 0 #8A5A00,-3px 0 0 #8A5A00,3px 0 0 #8A5A00}
+.pzbtn.sure{background:#C2457E;font-size:14px}.pzbtn:disabled{opacity:.6;cursor:default}
+.pzmsg{margin:4px 0 8px;font-size:15px;color:#B8360C}.pzmsg.ok{color:#2F7A3A;font-weight:600}
 .pzi.used,.pzi.expired{background:#F4F1F2;box-shadow:0 -3px 0 #DDD3D8,0 3px 0 #DDD3D8,-3px 0 0 #DDD3D8,3px 0 0 #DDD3D8}
 .pzi.used b,.pzi.expired b{color:#A99AA2;text-decoration:line-through}.pzi.used small,.pzi.expired small{color:#B9AEB3}.pzi.used .pzs,.pzi.expired .pzs{background:#C9BEC4}
 .pznote{margin:2px 0 6px;font-size:13px;color:var(--muted)}
@@ -151,7 +154,7 @@ const T = {
     got: n => `你捉到了「${n}」！`, prizeH: '哇！抽中了惊喜 (≧▽≦)',
     prize: x => ({'免费奶茶': '免费奶茶一杯，第二日即可兑换', '下次半价': '下次拼豆半价 ✿（60 天内有效）', '下次免单': '下次拼豆免单 ✿（60 天内有效）'}[x] || x), nth: n => `这是你的第 ${n} 只`, extra: x => ({'免费奶茶': '还中了：免费奶茶一杯 ✿ 跟店主说一声', '下次半价': '还中了：下次拼豆半价 ✿（60 天内）', '下次免单': '还中了：下次拼豆免单 ✿（60 天内）'}[x] || x),
     albT: '我的图鉴', albTi: 'Album', count: (n) => `已经捉到 <b>${n}</b> 只 · 集满 10 样免费拼豆一次`, reg: '森林居民', goHome: '进入我的主页 ✿ 看预约、换头像',
-    pzT: '🎁 我的奖品', pzNote: '到店出示此页或报昵称即可兑换（以店里记录为准，截图不算）', pzName: {'免费奶茶': '免费奶茶一杯', '下次半价': '下次拼豆半价', '下次免单': '下次拼豆免单', '免费拼豆一次': '免费拼豆一次'},
+    pzT: '🎁 我的奖品', pzNote: '到店结账时再点「兑换」，兑换后把这一页给店主看（每张只能用一次，点了不能撤回，截图不算）', pzUse: '兑换', pzSure: '确定兑换？再点一次', pzDoing: '兑换中…', pzAt: d => `${d} 兑换`, pzOK: (n, d) => `兑换成功！${n}（${d}）给店主看一下吧 ✿`, pzE: {USED: '这张已经兑换过啦', EXPIRED: '这张已经过期了', TOO_EARLY: '奶茶要第二日起才能兑换', NET: '兑换没成功，请再试一次或找店主'}, pzName: {'免费奶茶': '免费奶茶一杯', '下次半价': '下次拼豆半价', '下次免单': '下次拼豆免单', '免费拼豆一次': '免费拼豆一次'},
     pzGot: d => `${d} 抽中`, pzUntil: d => `有效至 ${d}`, pzTea: '第二日起可兑换', pzSt: {pending: '待兑', used: '已兑', expired: '已过期'}, win: '❄ 冬日限定', avT: '我的头像', avLock: '集齐冬日限定 6 样，解锁下面 4 款冬日头像', avPick: '点一下换头像', avNone: '还没有头像，从下面挑一个吧', avDef: '猫猫狗狗', avWin: '❄ 冬日头像', avSaved: '头像换好啦 ✿',
     wsay: '搓搓小手<br>迎接冬天的好运啦', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: '二维码过期啦，请重新扫一下柜台的码', TODAY: '今天已经抽过啦，明天再来～', ALL: '所有小可爱都捉齐啦，等冬日限定吧 ❄', CONTACT: '请填手机号或邮箱', NAME: '请填昵称（和第一次抽的时候一样）', NET: '网络有点问题，再试一次？'},
@@ -165,7 +168,7 @@ const T = {
     got: n => `Vous avez attrapé : ${n} !`, prizeH: 'Waouh, une surprise ! (≧▽≦)',
     prize: x => ({'免费奶茶': 'Un thé au lait offert, à récupérer dès le lendemain', '下次半价': '-50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Prochaine session offerte ✿ (60 jours)'}[x] || x), nth: n => `C’est votre n° ${n}`, extra: x => ({'免费奶茶': 'Bonus : un thé au lait offert ✿ dites-le à la gérante', '下次半价': 'Bonus : -50 % sur la prochaine session ✿ (60 jours)', '下次免单': 'Bonus : prochaine session offerte ✿ (60 jours)'}[x] || x),
     albT: 'Mon album', albTi: '图鉴', count: (n) => `<b>${n}</b> trouvailles · 10 = une session offerte`, reg: 'Habitants de la forêt', goHome: 'Ouvrir mon espace ✿ réservations, avatar',
-    pzT: '🎁 Mes cadeaux', pzNote: 'Montrez cette page ou donnez votre pseudo en boutique (le registre de la boutique fait foi, pas de capture d’écran)', pzName: {'免费奶茶': 'Un thé au lait offert', '下次半价': '-50 % sur la prochaine session', '下次免单': 'Prochaine session offerte', '免费拼豆一次': 'Une session offerte'},
+    pzT: '🎁 Mes cadeaux', pzNote: 'En boutique, au moment de payer, touchez « Utiliser » puis montrez cette page à la gérante (une seule fois, sans retour possible, pas de capture d’écran)', pzUse: 'Utiliser', pzSure: 'Sûr ? Touchez encore', pzDoing: 'Un instant…', pzAt: d => `utilisé le ${d}`, pzOK: (n, d) => `C’est validé ! ${n} (${d}) Montrez-le à la gérante ✿`, pzE: {USED: 'Ce cadeau a déjà été utilisé', EXPIRED: 'Ce cadeau a expiré', TOO_EARLY: 'Le thé au lait est à récupérer dès le lendemain', NET: 'Ça n’a pas marché, réessayez ou voyez avec la gérante'}, pzName: {'免费奶茶': 'Un thé au lait offert', '下次半价': '-50 % sur la prochaine session', '下次免单': 'Prochaine session offerte', '免费拼豆一次': 'Une session offerte'},
     pzGot: d => `gagné le ${d}`, pzUntil: d => `valable jusqu’au ${d}`, pzTea: 'à récupérer dès le lendemain', pzSt: {pending: 'À utiliser', used: 'Utilisé', expired: 'Expiré'}, win: '❄ Édition hiver', avT: 'Mon avatar', avLock: 'Complétez l’édition hiver (6) pour débloquer ces 4 avatars', avPick: 'Touchez pour changer', avNone: 'Pas encore d’avatar, choisissez-en un', avDef: 'Chats & chiens', avWin: '❄ Avatars d’hiver', avSaved: 'Avatar changé ✿',
     wsay: 'On se frotte les mains,<br>la chance de l’hiver arrive !', wsub: '☃️⸜💙🤍💙⸝☃️',
     e: {CODE: 'QR code expiré, scannez à nouveau celui du comptoir', TODAY: 'Déjà tiré aujourd’hui, revenez demain～', ALL: 'Vous les avez tous ! Attendez l’édition hiver ❄', CONTACT: 'Indiquez un téléphone ou un e-mail', NAME: 'Indiquez votre pseudo (le même que la première fois)', NET: 'Problème de réseau, réessayez ?'},
@@ -214,7 +217,20 @@ let myAvatar = '';
 const QMARK = ['.OOO.', 'O...O', '....O', '...O.', '..O..', '.....', '..O..'];
 const slots = (list, album, col) => list.map(a => album.includes(a.key)
   ? `<div class="slot" title="${esc(nameOf(a.key))}">${PX(a.rows, a.pal, '', 3)}</div>` : `<div class="slot no">${PX(QMARK, {O: col}, '', 4)}</div>`).join('');
-let prizesNow = [];
+let prizesNow = [], pzArm = null, pzBusy = null, pzMsg = null;
+const pzKey = z => z.date + '|' + z.prize;
+/* 我的奖品：点「兑换」再点一次确认，后台当场记成已兑 */
+async function redeemPz(k) {
+  if (pzBusy) return;
+  if (pzArm !== k) { pzArm = k; pzMsg = null; renderAlbum(albumNow); return; }
+  const [date, prize] = k.split('|');
+  pzArm = null; pzBusy = k; pzMsg = null; renderAlbum(albumNow);
+  try {
+    const r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify({action: 'redeem', date, prize, ...payload()})}).then(x => x.json());
+    pzMsg = {ok: r.ok, text: r.ok ? t().pzOK(t().pzName[prize] || prize, r.usedAt) : t().pzE[r.error] || t().pzE.NET};
+    pzBusy = null; renderAlbum(albumNow, undefined, r.prizes);
+  } catch (e) { pzBusy = null; pzMsg = {ok: false, text: t().pzE.NET}; renderAlbum(albumNow); }
+}
 function renderAlbum(album, avatar, prizes) {
   if (avatar !== undefined) myAvatar = avatar || '';
   if (prizes !== undefined) prizesNow = prizes || [];
@@ -230,8 +246,9 @@ function renderAlbum(album, avatar, prizes) {
       ? `<button type="button" class="avopt" data-av="${a.key}" aria-pressed="${a.key === myAvatar}">${PX(a.rows, a.pal, '', 2)}</button>`
       : `<span class="avopt locked">${PX(a.rows, Object.fromEntries(Object.keys(a.pal).map(k => [k, k === 'b' || k === 'f' ? '#EEF3F9' : '#C9D3DE'])), '', 2)}</span>`).join('')}</div>` : ''}
     ${prizesNow.length ? `<h4 class="sect pzh">${t().pzT}</h4><div class="pz">${prizesNow.map(z => `<div class="pzi ${z.status}"><div><b>${esc(t().pzName[z.prize] || z.prize)}</b>
-      <small>${t().pzGot(esc(z.date))} · ${z.until ? t().pzUntil(esc(z.until)) : (z.prize === '免费奶茶' ? t().pzTea : '')}</small></div><span class="pzs">${t().pzSt[z.status]}</span></div>`).join('')}
-      <p class="pznote">${t().pzNote}</p></div>` : ''}
+      <small>${t().pzGot(esc(z.date))}${z.usedAt ? ' · ' + t().pzAt(esc(z.usedAt)) : ''}${z.status === 'used' ? '' : z.until ? ' · ' + t().pzUntil(esc(z.until)) : (z.prize === '免费奶茶' ? ' · ' + t().pzTea : '')}</small></div>${z.canUse ? `<button type="button" class="pzbtn${pzArm === pzKey(z) ? ' sure' : ''}" data-pz="${esc(pzKey(z))}" ${pzBusy ? 'disabled' : ''}>${pzBusy === pzKey(z) ? t().pzDoing : pzArm === pzKey(z) ? t().pzSure : t().pzUse}</button>`
+        : `<span class="pzs">${t().pzSt[z.status]}</span>`}</div>`).join('')}
+      ${pzMsg ? `<p class="pzmsg${pzMsg.ok ? ' ok' : ''}" role="status">${esc(pzMsg.text)}</p>` : ''}<p class="pznote">${t().pzNote}</p></div>` : ''}
     <h4 class="sect">${TREE_ICON}${t().reg}</h4><div class="album">${slots(PIPI_ANIMALS, album, '#F2C9DA')}</div>
     ${showWinter ? `<h4 class="sect wsect">${t().win}</h4><div class="album winter">${slots(PIPI_WINTER, album, '#C9DCF2')}</div>` : ''}
     <p class="count">${t().count(n)}</p>${code ? `<p class="gohome"><a class="go" href="draw.html">${t().goHome}</a></p>` : ''}</div>`;
@@ -303,7 +320,7 @@ async function cancelBk(id) {
 }
 async function doLook() {
   const err = readForm(); if (err) { msg = err; renderForm(); return; }
-  msg = ''; renderForm(); bkArm = null; bkMsg = ''; loadBookings();
+  msg = ''; renderForm(); bkArm = null; bkMsg = ''; pzArm = null; pzMsg = null; loadBookings();
   try {
     const q = new URLSearchParams({action: 'me', ...payload()});
     const r = await fetch(API + '?' + q).then(x => x.json());
@@ -407,6 +424,7 @@ document.addEventListener('click', e => {
   if (b.id === 'wclose' && window.closeXmas) window.closeXmas();
   if (b.dataset.av) pickAvatar(b.dataset.av);
   if (b.dataset.bk) cancelBk(b.dataset.bk);
+  if (b.dataset.pz) redeemPz(b.dataset.pz);
 });
 renderForm();
 if (!code && me.name && (me.phone || me.email)) doLook();
